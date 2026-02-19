@@ -1,0 +1,32 @@
+{
+  "name": "NaijaExpense",
+  "short_name": "NaijaExpense",
+  "description": "Nigerian business expense tracker with 2026 Tax Reform Act compliance",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#141414",
+  "orientation": "portrait-primary",
+  "categories": ["finance", "business", "productivity"],
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Add Expense",
+      "url": "/expenses?action=add",
+      "description": "Quickly add a new expense"
+    }
+  ]
+}
