@@ -24,7 +24,7 @@ const PasswordInput = React.forwardRef<
         size="icon"
         onClick={() => setShowPassword((prev) => !prev)}
         disabled={props.disabled}
-        className="absolute right-1.5 rounded-none! border-none! h-fit w-fit p-2 hover:bg-transparent text-muted-foreground"
+        className="absolute right-1.5 rounded-sm border-none! h-fit w-fit p-2 hover:bg-transparent text-muted-foreground"
       >
         {showPassword ? (
           <IconEyeOff className="h-4 w-4 shrink-0" aria-hidden="true" />
