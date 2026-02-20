@@ -234,7 +234,7 @@ export function Navigation() {
                 {/* Active Indicator */}
                 <div
                   className={cn(
-                    "absolute -top-2 h-1 w-12 rounded-b-full bg-primary shadow-sm shadow-primary/50 transition-all duration-300",
+                    "absolute -top-2 h-1 w-12 rounded-b-full bg-primary transition-all duration-300",
                     isActive ? "opacity-100 scale-100" : "opacity-0 scale-0",
                   )}
                 />

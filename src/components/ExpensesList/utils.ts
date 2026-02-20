@@ -1,10 +1,20 @@
 // Badge variants per expense tag
 export const TAG_VARIANT: Record<
   string,
-  "default" | "secondary" | "outline" | "destructive"
+  | "default"
+  | "secondary"
+  | "outline"
+  | "destructive"
+  | "ghost"
+  | "deductible"
+  | "capital"
+  | "personal"
+  | "business"
+  | "taxable"
 > = {
-  deductible: "default",
-  capital: "secondary",
-  personal: "outline",
-  business: "secondary",
+  deductible: "deductible",
+  capital: "capital",
+  personal: "personal",
+  business: "business",
+  taxable: "taxable",
 };

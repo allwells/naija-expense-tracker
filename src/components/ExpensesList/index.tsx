@@ -1,13 +1,16 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
-import { Button, Skeleton } from "@/components/ui";
+import { toast } from "sonner";
 import { IconPlus } from "@tabler/icons-react";
+import { ExpenseFilters } from "./ExpenseFilters";
+import { Button, Skeleton } from "@/components/ui";
 import { ExpenseForm } from "@/components/ExpenseForm";
+import { ExpenseDetailModal } from "./ExpenseDetailModal";
+import { useState, useCallback, useMemo, useTransition } from "react";
 import { ExpensesTable, ExpensesTableSkeleton } from "./ExpensesTable";
 import { ExpensesCards, ExpensesCardsSkeleton } from "./ExpensesCards";
-import { ExpenseFilters } from "./ExpenseFilters";
-import { ExpenseDetailModal } from "./ExpenseDetailModal";
+import { deleteExpenseAction } from "@/app/actions/expense-actions";
+import { DeleteConfirmationModal } from "@/components/shared";
 import type { ExpenseRecord, PaginatedExpenses } from "@/types/expense";
 
 interface ExpensesListProps {
@@ -36,6 +39,13 @@ export function ExpensesList({
   );
   const [detailOpen, setDetailOpen] = useState(false);
 
+  // Delete state
+  const [deleteExpense, setDeleteExpense] = useState<ExpenseRecord | null>(
+    null,
+  );
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [isDeleting, startDeletion] = useTransition();
+
   // Sort state (client-side sort within current page)
   const [sortField, setSortField] = useState<SortField>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
@@ -56,10 +66,33 @@ export function ExpensesList({
     setDetailOpen(true);
   }, []);
 
-  const openDeleteFromDetail = useCallback((expense: ExpenseRecord) => {
-    setDetailExpense(expense);
-    setDetailOpen(true);
+  const openDelete = useCallback((expense: ExpenseRecord) => {
+    setDeleteExpense(expense);
+    setDeleteOpen(true);
   }, []);
+
+  const handleDelete = useCallback(() => {
+    if (!deleteExpense) return;
+
+    startDeletion(async () => {
+      const result = await deleteExpenseAction(deleteExpense.id);
+      if (result.error) {
+        toast.error("Could not delete expense", {
+          description: result.error,
+        });
+        return;
+      }
+
+      toast.success("Expense deleted");
+      setDeleteOpen(false);
+      setDeleteExpense(null);
+      // If the detail modal was showing this expense, close it
+      if (detailExpense?.id === deleteExpense.id) {
+        setDetailOpen(false);
+        setDetailExpense(null);
+      }
+    });
+  }, [deleteExpense, detailExpense]);
 
   const handleSort = useCallback(
     (field: SortField) => {
@@ -134,13 +167,13 @@ export function ExpensesList({
             sortDirection={sortDirection}
             onSort={handleSort}
             onEdit={openEdit}
-            onDelete={(e) => openDeleteFromDetail(e)}
+            onDelete={openDelete}
             onViewReceipt={openDetail}
           />
           <ExpensesCards
             expenses={sortedExpenses}
             onEdit={openEdit}
-            onDelete={(e) => openDeleteFromDetail(e)}
+            onDelete={openDelete}
             onViewDetail={openDetail}
           />
         </>
@@ -209,6 +242,16 @@ export function ExpensesList({
           setDetailExpense(null);
         }}
         onEdit={openEdit}
+        onDelete={openDelete}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        onConfirm={handleDelete}
+        isPending={isDeleting}
+        title="Delete Expense?"
       />
     </div>
   );

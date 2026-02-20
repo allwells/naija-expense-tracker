@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { toast } from "sonner";
 import { createExpenseSchema } from "@/lib/schemas/expense";
 import type { CreateExpenseSchema } from "@/lib/schemas/expense";
@@ -36,6 +36,7 @@ export function useExpenseForm({ onSuccess, expense }: UseExpenseFormOptions) {
     resolver: zodResolver(
       createExpenseSchema,
     ) as unknown as Resolver<CreateExpenseSchema>,
+    shouldUnregister: true,
     defaultValues: expense
       ? {
           date: expense.date,
@@ -56,8 +57,47 @@ export function useExpenseForm({ onSuccess, expense }: UseExpenseFormOptions) {
           original_currency: "NGN",
           exchange_rate: 1,
           ocr_extracted: false,
+          description: "",
+          notes: undefined,
         },
   });
+
+  // Re-populate form when expense changes (e.g. switching from view modal to info sheet)
+  useEffect(() => {
+    if (expense) {
+      form.reset({
+        date: expense.date,
+        amount_ngn: expense.amount_ngn,
+        original_amount: expense.original_amount ?? undefined,
+        original_currency: expense.original_currency ?? "NGN",
+        exchange_rate: expense.exchange_rate ?? 1,
+        category: expense.category,
+        tag: expense.tag,
+        description: expense.description ?? "",
+        notes: expense.notes ?? undefined,
+        ocr_extracted: expense.ocr_extracted ?? false,
+        ocr_amount: expense.ocr_amount ?? undefined,
+        ocr_date: expense.ocr_date ?? undefined,
+      });
+      setReceiptPreviewUrl(expense.receipt_url ?? null);
+    } else {
+      form.reset({
+        date: today,
+        amount_ngn: undefined,
+        original_amount: undefined,
+        original_currency: "NGN",
+        exchange_rate: 1,
+        category: undefined,
+        tag: undefined,
+        description: "",
+        notes: undefined,
+        ocr_extracted: false,
+        ocr_amount: undefined,
+        ocr_date: undefined,
+      });
+      setReceiptPreviewUrl(null);
+    }
+  }, [expense, form, today]);
 
   // Auto-convert foreign currency → NGN when currency/amount changes
   const handleCurrencyChange = useCallback(

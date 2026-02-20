@@ -19,6 +19,20 @@ export type ExpenseCategory =
   | "repairs_maintenance"
   | "fuel"
   | "airtime_internet"
+  | "loan_repayment"
+  | "gift"
+  | "groceries"
+  | "reimbursement"
+  | "transport"
+  | "education"
+  | "healthcare"
+  | "personal_care"
+  | "clothing"
+  | "household"
+  | "charity"
+  | "taxes_levies"
+  | "entertainment"
+  | "savings_investment"
   | "other";
 
 export type IncomeType =

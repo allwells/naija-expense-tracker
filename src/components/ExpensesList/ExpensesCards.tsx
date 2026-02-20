@@ -4,9 +4,22 @@ import { TAG_VARIANT } from "./utils";
 import { formatNGN } from "@/lib/format";
 import { format, parseISO } from "date-fns";
 import type { ExpenseRecord } from "@/types/expense";
-import { IconReceipt, IconPencil, IconTrash } from "@tabler/icons-react";
+import {
+  IconReceipt,
+  IconPencil,
+  IconTrash,
+  IconDotsVertical,
+} from "@tabler/icons-react";
 import { EXPENSE_CATEGORY_LABELS, EXPENSE_TAG_LABELS } from "@/types/expense";
-import { Card, CardContent, Badge, Button, Skeleton } from "@/components/ui";
+import { Card, CardContent, Badge, Skeleton } from "@/components/ui";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 interface ExpensesCardsProps {
   expenses: ExpenseRecord[];
@@ -38,30 +51,79 @@ export function ExpensesCards({
   return (
     <div className="flex flex-col gap-3 md:hidden">
       {expenses.map((expense) => (
-        <Card key={expense.id} className="border-2 border-border shadow-none">
-          <CardContent className="p-4">
-            <button
-              className="w-full text-left"
-              onClick={() => onViewDetail(expense)}
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">
-                    {expense.description ??
-                      EXPENSE_CATEGORY_LABELS[
-                        expense.category as keyof typeof EXPENSE_CATEGORY_LABELS
-                      ] ??
-                      expense.category}
-                  </p>
-                  <p className="mt-0.5 text-xs text-muted-foreground font-mono">
-                    {format(parseISO(expense.date), "d MMM yyyy")}
-                  </p>
-                </div>
-                <p className="font-mono font-semibold tabular-nums text-sm shrink-0">
+        <Card
+          key={expense.id}
+          className="shadow-none pt-3"
+          onClick={() => onViewDetail(expense)}
+        >
+          <CardContent>
+            {/* Top row: info + amount + menu */}
+            <div className="flex flex-col items-start gap-2">
+              {/* Amount — prominent */}
+              <div className="flex items-center gap-1.5 shrink-0 w-full">
+                <p className="font-mono font-bold tabular-nums text-lg leading-none">
                   {formatNGN(expense.amount_ngn)}
                 </p>
+
+                {/* 3-dot menu */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 text-muted-foreground hover:text-foreground shrink-0 -mr-2 ml-auto"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <IconDotsVertical className="size-4" />
+                      <span className="sr-only">Actions</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-36">
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(expense);
+                      }}
+                    >
+                      <IconPencil className="size-3.5 mr-2" />
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      variant="destructive"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(expense);
+                      }}
+                    >
+                      <IconTrash className="size-3.5 mr-2" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
-              <div className="mt-2.5 flex items-center gap-2">
+
+              {/* Clickable info area */}
+              <div className="flex-1 min-w-0 text-left">
+                <p className="text-sm font-medium truncate leading-snug">
+                  {expense.description
+                    ? expense.description
+                    : (EXPENSE_CATEGORY_LABELS[
+                        expense.category as keyof typeof EXPENSE_CATEGORY_LABELS
+                      ] ?? expense.category)}
+                </p>
+                <p className="mt-0.5 text-xs text-muted-foreground font-mono">
+                  {format(parseISO(expense.date), "do MMMM yyyy")}
+                </p>
+              </div>
+            </div>
+
+            {/* Bottom row: tags + receipt icon */}
+            <button
+              className="mt-2.5 w-full text-left"
+              onClick={() => onViewDetail(expense)}
+            >
+              <div className="flex items-center gap-2">
                 <Badge
                   variant={
                     TAG_VARIANT[expense.tag as keyof typeof TAG_VARIANT] ??
@@ -73,37 +135,16 @@ export function ExpensesCards({
                     expense.tag as keyof typeof EXPENSE_TAG_LABELS
                   ] ?? expense.tag}
                 </Badge>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs text-muted-foreground truncate">
                   {EXPENSE_CATEGORY_LABELS[
                     expense.category as keyof typeof EXPENSE_CATEGORY_LABELS
                   ] ?? expense.category}
                 </span>
                 {expense.receipt_url && (
-                  <IconReceipt className="ml-auto size-4 text-muted-foreground" />
+                  <IconReceipt className="ml-auto size-4 text-muted-foreground shrink-0" />
                 )}
               </div>
             </button>
-
-            <div className="mt-3 flex items-center justify-end gap-1 border-t border-border pt-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-7 gap-1.5 text-xs"
-                onClick={() => onEdit(expense)}
-              >
-                <IconPencil className="size-3.5" />
-                Edit
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-7 gap-1.5 text-xs text-destructive hover:text-destructive"
-                onClick={() => onDelete(expense)}
-              >
-                <IconTrash className="size-3.5" />
-                Delete
-              </Button>
-            </div>
           </CardContent>
         </Card>
       ))}
@@ -115,8 +156,8 @@ export function ExpensesCardsSkeleton() {
   return (
     <div className="flex flex-col gap-3 md:hidden">
       {Array.from({ length: 4 }).map((_, i) => (
-        <Card key={i} className="border-2 border-border shadow-none">
-          <CardContent className="p-4 space-y-3">
+        <Card key={i} className="shadow-none">
+          <CardContent className="px-4 space-y-3">
             <div className="flex justify-between">
               <Skeleton className="h-4 w-36" />
               <Skeleton className="h-4 w-20" />

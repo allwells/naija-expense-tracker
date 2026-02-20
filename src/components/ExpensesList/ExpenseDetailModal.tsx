@@ -1,16 +1,15 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import {
+  Badge,
+  Separator,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+  Button,
+} from "@/components/ui";
 import {
   IconPencil,
   IconTrash,
@@ -18,19 +17,21 @@ import {
   IconReceipt,
   IconExternalLink,
 } from "@tabler/icons-react";
-import { format, parseISO } from "date-fns";
-import { formatNGN } from "@/lib/format";
-import { EXPENSE_CATEGORY_LABELS, EXPENSE_TAG_LABELS } from "@/types/expense";
-import { deleteExpenseAction } from "@/app/actions/expense-actions";
 import { toast } from "sonner";
 import { TAG_VARIANT } from "./utils";
+import { formatNGN } from "@/lib/format";
+import { format, parseISO } from "date-fns";
+import { useState, useTransition } from "react";
+import { deleteExpenseAction } from "@/app/actions/expense-actions";
 import type { ExpenseRecord } from "@/types/expense";
+import { EXPENSE_CATEGORY_LABELS, EXPENSE_TAG_LABELS } from "@/types/expense";
 
 interface ExpenseDetailModalProps {
   expense: ExpenseRecord | null;
   open: boolean;
   onClose: () => void;
   onEdit: (expense: ExpenseRecord) => void;
+  onDelete: (expense: ExpenseRecord) => void;
 }
 
 export function ExpenseDetailModal({
@@ -38,63 +39,28 @@ export function ExpenseDetailModal({
   open,
   onClose,
   onEdit,
+  onDelete,
 }: ExpenseDetailModalProps) {
-  const [isPending, startTransition] = useTransition();
-  const [confirmDelete, setConfirmDelete] = useState(false);
-
   if (!expense) return null;
 
-  const handleDelete = () => {
-    if (!confirmDelete) {
-      setConfirmDelete(true);
-      return;
-    }
-
-    startTransition(async () => {
-      const result = await deleteExpenseAction(expense.id);
-      if (result.error) {
-        toast.error("Could not delete expense", {
-          description:
-            "Something went wrong. Please try again or refresh the page.",
-        });
-        setConfirmDelete(false);
-        return;
-      }
-
-      const restoreMsg = "To restore, re-add this expense manually.";
-
-      toast.success("Expense deleted", {
-        description: "The expense has been removed from your records.",
-        action: {
-          label: "OK",
-          onClick: () => undefined,
-        },
-      });
-
-      console.error(restoreMsg); // avoid lint — not production logging
-      onClose();
-    });
-  };
-
   const handleClose = () => {
-    setConfirmDelete(false);
     onClose();
   };
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && handleClose()}>
-      <DialogContent className="max-w-md border-2 border-border sm:rounded-none">
+      <DialogContent className="md:max-w-sm pt-3 pb-4 px-4">
         <DialogHeader>
-          <DialogTitle className="text-base font-semibold">
+          <DialogTitle className="text-base font-semibold mr-auto">
             Expense Detail
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-3 text-sm">
+        <div className="space-y-3 text-sm mt-4">
           {/* Amount */}
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">Amount</span>
-            <span className="font-mono font-semibold tabular-nums text-base">
+            <span className="font-mono font-bold tabular-nums text-lg md:text-xl leading-none">
               {formatNGN(expense.amount_ngn)}
             </span>
           </div>
@@ -116,7 +82,7 @@ export function ExpenseDetailModal({
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">Date</span>
             <span className="font-mono">
-              {format(parseISO(expense.date), "d MMMM yyyy")}
+              {format(parseISO(expense.date), "do MMMM yyyy")}
             </span>
           </div>
 
@@ -204,12 +170,11 @@ export function ExpenseDetailModal({
           )}
         </div>
 
-        <DialogFooter className="flex-col gap-2 sm:flex-row sm:justify-between">
-          <div className="flex gap-2">
+        <DialogFooter className="mt-6">
+          <div className="w-full grid grid-cols-2 gap-2">
             <Button
               variant="outline"
               size="sm"
-              className="gap-2"
               onClick={() => {
                 handleClose();
                 onEdit(expense);
@@ -219,23 +184,15 @@ export function ExpenseDetailModal({
               Edit
             </Button>
             <Button
-              variant="outline"
               size="sm"
-              className={`gap-2 ${confirmDelete ? "border-destructive text-destructive hover:text-destructive" : ""}`}
-              onClick={handleDelete}
-              disabled={isPending}
+              variant="outline"
+              className="text-destructive hover:bg-destructive/10 border-destructive/20"
+              onClick={() => onDelete(expense)}
             >
-              {isPending ? (
-                <IconLoader2 className="size-4 animate-spin" />
-              ) : (
-                <IconTrash className="size-4" />
-              )}
-              {confirmDelete ? "Confirm delete?" : "Delete"}
+              <IconTrash className="size-4" />
+              Delete
             </Button>
           </div>
-          <Button variant="ghost" size="sm" onClick={handleClose}>
-            Close
-          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

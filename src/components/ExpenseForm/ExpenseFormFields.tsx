@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   Form,
   FormControl,
@@ -55,6 +55,96 @@ interface ExpenseFormFieldsProps {
   ) => void;
   onSubmit: (e?: React.BaseSyntheticEvent) => void;
   onCancel: () => void;
+}
+
+interface FormattedAmountInputProps {
+  value: number | undefined;
+  onChange: (value: number | undefined) => void;
+  placeholder?: string;
+  className?: string;
+  prefix?: string;
+}
+
+function FormattedAmountInput({
+  value,
+  onChange,
+  placeholder = "0.00",
+  className,
+  prefix,
+}: FormattedAmountInputProps) {
+  // We use a state to manage the display value (string with commas)
+  // while keeping it in sync with the actual numeric value from the form
+  const [displayValue, setDisplayValue] = useState<string>(
+    value !== undefined && value !== null
+      ? value.toLocaleString("en-US", {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 2,
+        })
+      : "",
+  );
+
+  // Sync internal state when the numeric value changes externally
+  useEffect(() => {
+    const numericInternal = parseFloat(displayValue.replace(/,/g, ""));
+    if (value !== numericInternal) {
+      setDisplayValue(
+        value !== undefined && value !== null
+          ? value.toLocaleString("en-US", {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 2,
+            })
+          : "",
+      );
+    }
+  }, [value, displayValue]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawVal = e.target.value;
+    // Allow digits, one dot, and commas
+    const cleanVal = rawVal.replace(/[^\d.,]/g, "");
+
+    // Prevent multiple dots
+    if ((cleanVal.match(/\./g) || []).length > 1) return;
+
+    setDisplayValue(cleanVal);
+
+    const numeric = parseFloat(cleanVal.replace(/,/g, ""));
+    onChange(isNaN(numeric) ? undefined : numeric);
+  };
+
+  const handleBlur = () => {
+    const numeric = parseFloat(displayValue.replace(/,/g, ""));
+    if (!isNaN(numeric)) {
+      const formatted = numeric.toLocaleString("en-US", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      });
+      setDisplayValue(formatted);
+      onChange(numeric);
+    } else {
+      setDisplayValue("");
+      onChange(undefined);
+    }
+  };
+
+  return (
+    <div className="relative w-full">
+      {prefix && (
+        <span className="absolute left-3 leading-none top-1/2 -translate-y-1/2 text-muted-foreground font-mono text-sm pointer-events-none">
+          {prefix}
+        </span>
+      )}
+      <Input
+        type="text"
+        inputMode="decimal"
+        placeholder={placeholder}
+        className={cn("font-mono", prefix && "pl-7", className)}
+        value={displayValue}
+        onChange={handleChange}
+        onBlur={handleBlur}
+      />
+    </div>
+  );
 }
 
 export function ExpenseFormFields({
@@ -176,20 +266,10 @@ export function ExpenseFormFields({
                 <FormItem>
                   <FormLabel>Original Amount</FormLabel>
                   <FormControl>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
+                    <FormattedAmountInput
+                      value={field.value}
+                      onChange={field.onChange}
                       placeholder="0.00"
-                      className="font-mono"
-                      value={field.value ?? ""}
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value === ""
-                            ? undefined
-                            : parseFloat(e.target.value),
-                        )
-                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -207,26 +287,12 @@ export function ExpenseFormFields({
             <FormItem>
               <FormLabel>Amount (₦ NGN)</FormLabel>
               <FormControl>
-                <div className="relative">
-                  <span className="absolute left-3 leading-none top-1/2 -translate-y-1/2 text-muted-foreground font-mono text-sm pointer-events-none">
-                    ₦
-                  </span>
-                  <Input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder="0.00"
-                    className="pl-7 font-mono"
-                    value={field.value ?? ""}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value === ""
-                          ? undefined
-                          : parseFloat(e.target.value),
-                      )
-                    }
-                  />
-                </div>
+                <FormattedAmountInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  prefix="₦"
+                  placeholder="0.00"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -348,7 +414,10 @@ export function ExpenseFormFields({
                   className="resize-none min-h-20"
                   {...field}
                   value={field.value ?? ""}
-                  onChange={(e) => field.onChange(e.target.value || undefined)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    field.onChange(val === "" ? undefined : val);
+                  }}
                 />
               </FormControl>
               <FormMessage />

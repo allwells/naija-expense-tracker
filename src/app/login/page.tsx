@@ -67,7 +67,7 @@ export default function LoginPage() {
           <h3 className="text-sm uppercase font-bold">Admin Login</h3>
         </div>
 
-        <Card>
+        <Card className="pt-6">
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">

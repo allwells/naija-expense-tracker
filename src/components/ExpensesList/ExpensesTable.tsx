@@ -129,8 +129,12 @@ export function ExpensesTable({
             </TableRow>
           ) : (
             expenses.map((expense) => (
-              <TableRow key={expense.id} className="divide-x">
-                <TableCell className="font-mono text-sm tabular-nums">
+              <TableRow
+                key={expense.id}
+                className="divide-x cursor-pointer transition-colors"
+                onClick={() => onViewReceipt(expense)}
+              >
+                <TableCell className="font-mono text-sm tabular-nums text-nowrap">
                   {format(parseISO(expense.date), "MMMM dd, yyyy")}
                 </TableCell>
                 <TableCell className="max-w-50 truncate">
@@ -156,7 +160,7 @@ export function ExpensesTable({
                 <TableCell className="font-mono tabular-nums">
                   {formatNGN(expense.amount_ngn)}
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center justify-center gap-1">
                     {expense.receipt_url && (
                       <Button
