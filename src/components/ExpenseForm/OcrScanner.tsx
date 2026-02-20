@@ -32,7 +32,7 @@ export function OcrScanner({
     <div className="space-y-3">
       {/* Processing state */}
       {status === "processing" && (
-        <div className="space-y-2 border-2 border-border bg-muted/30 p-3">
+        <div className="space-y-2 border bg-muted/30 p-3 rounded-md">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <IconScan className="size-4 animate-pulse" />
             <span>Scanning receipt… {progress}%</span>
@@ -43,7 +43,7 @@ export function OcrScanner({
 
       {/* Error state */}
       {status === "error" && (
-        <div className="flex items-center gap-2 border-2 border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
+        <div className="flex items-center gap-2 border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive rounded-md">
           <IconAlertTriangle className="size-4 shrink-0" />
           <span>Could not scan this file. Please enter details manually.</span>
         </div>
@@ -54,7 +54,7 @@ export function OcrScanner({
         result &&
         result.amount === null &&
         result.date === null && (
-          <div className="flex items-center gap-2 border-2 border-amber-300 bg-amber-50 p-3 text-sm text-amber-700 dark:border-amber-700 dark:bg-amber-950/20 dark:text-amber-400">
+          <div className="flex items-center gap-2 border border-amber-300 bg-amber-50 rounded-md p-3 text-sm text-amber-700 dark:border-amber-700 dark:bg-amber-950/20 dark:text-amber-400">
             <IconAlertTriangle className="size-4 shrink-0" />
             <span>
               Image quality too low to extract values. Please enter manually.
@@ -66,7 +66,7 @@ export function OcrScanner({
       {status === "done" &&
         result &&
         (result.amount !== null || result.date !== null) && (
-          <div className="space-y-2 border-2 border-border bg-muted/20 p-3">
+          <div className="space-y-2 border bg-muted/20 p-3 rounded-md">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               OCR Suggestions — review before using
             </p>

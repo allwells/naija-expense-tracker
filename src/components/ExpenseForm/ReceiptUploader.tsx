@@ -8,6 +8,7 @@ import {
   IconX,
   IconFileText,
   IconPhoto,
+  IconReceipt,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
@@ -84,25 +85,18 @@ export function ReceiptUploader({
 
   if (previewUrl) {
     return (
-      <div className="relative flex items-center gap-3 border border-border bg-muted/20 p-4 rounded-md">
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center border-2 border-border bg-background overflow-hidden">
-          {isImage ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={previewUrl}
-              alt="Receipt preview"
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <IconFileText className="size-6 text-muted-foreground" />
-          )}
+      <div className="relative flex items-center gap-3 border bg-muted/20 p-2 rounded-md">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center border rounded-sm bg-background overflow-hidden">
+          <IconReceipt className="size-6 stroke-1 text-muted-foreground" />
         </div>
+
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium truncate">Receipt attached</p>
           <p className="text-xs text-muted-foreground">
             {isImage ? "Image" : "PDF"} · click × to remove
           </p>
         </div>
+
         <Button
           type="button"
           variant="ghost"

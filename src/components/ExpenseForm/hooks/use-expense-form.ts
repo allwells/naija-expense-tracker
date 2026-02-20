@@ -30,36 +30,29 @@ export function useExpenseForm({ onSuccess, expense }: UseExpenseFormOptions) {
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split("T")[0] as string;
+
+  const emptyDefaults: CreateExpenseSchema = {
+    date: today,
+    amount_ngn: undefined as unknown as number,
+    original_amount: undefined as unknown as number,
+    original_currency: "NGN",
+    exchange_rate: 1,
+    category: undefined as unknown as any,
+    tag: undefined as unknown as any,
+    description: "",
+    notes: "",
+    ocr_extracted: false,
+    ocr_amount: undefined as unknown as number,
+    ocr_date: undefined as unknown as string,
+  };
 
   const form = useForm<CreateExpenseSchema>({
     resolver: zodResolver(
       createExpenseSchema,
     ) as unknown as Resolver<CreateExpenseSchema>,
     shouldUnregister: true,
-    defaultValues: expense
-      ? {
-          date: expense.date,
-          amount_ngn: expense.amount_ngn,
-          original_amount: expense.original_amount ?? undefined,
-          original_currency: expense.original_currency ?? "NGN",
-          exchange_rate: expense.exchange_rate ?? 1,
-          category: expense.category,
-          tag: expense.tag,
-          description: expense.description ?? "",
-          notes: expense.notes ?? undefined,
-          ocr_extracted: expense.ocr_extracted ?? false,
-          ocr_amount: expense.ocr_amount ?? undefined,
-          ocr_date: expense.ocr_date ?? undefined,
-        }
-      : {
-          date: today,
-          original_currency: "NGN",
-          exchange_rate: 1,
-          ocr_extracted: false,
-          description: "",
-          notes: undefined,
-        },
+    defaultValues: emptyDefaults,
   });
 
   // Re-populate form when expense changes (e.g. switching from view modal to info sheet)
@@ -74,27 +67,14 @@ export function useExpenseForm({ onSuccess, expense }: UseExpenseFormOptions) {
         category: expense.category,
         tag: expense.tag,
         description: expense.description ?? "",
-        notes: expense.notes ?? undefined,
+        notes: expense.notes ?? "",
         ocr_extracted: expense.ocr_extracted ?? false,
         ocr_amount: expense.ocr_amount ?? undefined,
         ocr_date: expense.ocr_date ?? undefined,
       });
       setReceiptPreviewUrl(expense.receipt_url ?? null);
     } else {
-      form.reset({
-        date: today,
-        amount_ngn: undefined,
-        original_amount: undefined,
-        original_currency: "NGN",
-        exchange_rate: 1,
-        category: undefined,
-        tag: undefined,
-        description: "",
-        notes: undefined,
-        ocr_extracted: false,
-        ocr_amount: undefined,
-        ocr_date: undefined,
-      });
+      form.reset(emptyDefaults);
       setReceiptPreviewUrl(null);
     }
   }, [expense, form, today]);
@@ -171,7 +151,7 @@ export function useExpenseForm({ onSuccess, expense }: UseExpenseFormOptions) {
             : `${formatNGN(saved.amount_ngn)} · ${categoryLabel} added successfully.`,
         });
 
-        form.reset();
+        form.reset(emptyDefaults);
         clearReceipt();
         onSuccess();
       } catch {
