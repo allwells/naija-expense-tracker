@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "test": "bun test",
     "db:setup": "bun run scripts/migrate.ts",
     "db:seed": "bun run scripts/seed-admin.ts"
   },
@@ -37,6 +38,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/bun": "^1.3.9",
     "@types/minimatch": "^6.0.0",
     "@types/node": "^20",
     "@types/pg": "^8.16.0",
