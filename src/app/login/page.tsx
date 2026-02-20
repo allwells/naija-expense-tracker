@@ -60,14 +60,14 @@ export default function LoginPage() {
         <ThemeToggle />
       </div>
 
-      <div className="w-full max-w-sm space-y-6">
+      <div className="w-full max-w-xs space-y-6">
         <div className="flex items-center justify-center gap-3">
-          <Logo />
-          <div className="w-0 h-8 shrink-0 border" />
-          <h3 className="text-lg font-bold">Admin Login</h3>
+          <Logo type="compact" />
+          <div className="w-0 h-6 shrink-0 border-r" />
+          <h3 className="text-sm uppercase font-bold">Admin Login</h3>
         </div>
 
-        <Card className="border-2">
+        <Card>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
@@ -97,7 +97,6 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 className="w-full"
-                size="lg"
                 disabled={isLoading}
                 loading={isLoading}
               >

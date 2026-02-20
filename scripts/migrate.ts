@@ -26,7 +26,13 @@ async function runMigrations() {
     const schemaDir = path.join(__dirname, "../schema");
 
     // Order matters: main (tables) -> auth (better-auth tables) -> rls (policies) -> storage (buckets)
-    const files = ["main.sql", "auth.sql", "rls.sql", "storage.sql"];
+    const files = [
+      "main.sql",
+      "auth.sql",
+      "fix_ids.sql",
+      "rls.sql",
+      "storage.sql",
+    ];
 
     for (const file of files) {
       const filePath = path.join(schemaDir, file);

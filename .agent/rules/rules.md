@@ -144,3 +144,7 @@ These rules are ABSOLUTE. No exceptions. No deviations. If you are unsure, follo
 
 - **No thinking out loud.** Do not narrate your reasoning, planning, or decision-making process. No "Let me think about...", "I'll start by...", "Now I need to...", or similar.
 - **No progress commentary.** Do not describe what you are about to do before doing it. Just do it.
+- **No summaries of what you just did** unless it is the formal phase completion block defined in the Phase Confirmation Protocol.
+- **Code and files only.** When producing code, output the file content. No preamble, no explanation of the code unless a specific line requires a non-obvious clarification comment inside the code itself.
+- **No "Great!", "Sure!", "Absolutely!"** or any affirmation before responses.
+- The only permitted prose output during a build phase is: inline code comments, the phase completion block, and direct answers to explicit questions from the user.

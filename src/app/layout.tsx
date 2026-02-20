@@ -1,7 +1,8 @@
+import "./globals.css";
+
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "@/components/Providers";
-import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,14 +15,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NaijaExpense — Nigerian Business Expense Tracker",
+  title: "Naija Expense",
   description:
     "Track expenses, manage receipts, and compute tax liability under Nigeria's 2026 Tax Reform Act.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "NaijaExpense",
+    title: "Naija Expense",
   },
   formatDetection: {
     telephone: false,
@@ -46,7 +47,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="NaijaExpense" />
+        <meta name="apple-mobile-web-app-title" content="Naija Expense" />
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body

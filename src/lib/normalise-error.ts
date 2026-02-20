@@ -13,6 +13,6 @@ export function normaliseSupabaseError(error: PostgrestError): string {
   return (
     SUPABASE_ERROR_MAP[error.code] ??
     SUPABASE_ERROR_MAP[error.message] ??
-    "A database error occurred. Please try again."
+    `A database error occurred: ${error.message} (Code: ${error.code})`
   );
 }

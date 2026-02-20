@@ -1,7 +1,7 @@
 {
-  "name": "NaijaExpense",
-  "short_name": "NaijaExpense",
-  "description": "Nigerian business expense tracker with 2026 Tax Reform Act compliance",
+  "name": "Naija Expense",
+  "short_name": "Naija Expense",
+  "description": "Expense tracker with 2026 Tax Reform Act compliance",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#ffffff",

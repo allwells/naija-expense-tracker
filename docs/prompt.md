@@ -1,8 +1,3 @@
-Here is the complete updated `docs/prompt.md`:
-
----
-
-````markdown
 # NaijaExpense — Antigravity Build Prompt
 
 ## Project Overview
@@ -167,7 +162,6 @@ exchange_rates (
   fetched_at timestamptz default now()
 )
 ```
-````
 
 #### 2.2 TypeScript Types
 
@@ -895,7 +889,3 @@ Test checklist:
 ```
 
 Do NOT continue past this block until the user responds.
-
-```
-
-```

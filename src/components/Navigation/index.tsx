@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 import {
   IconReceipt,
   IconReceiptFilled,
@@ -16,7 +17,14 @@ import {
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/Logo";
 import { signOut } from "@/lib/auth-client";
-import { Button, Separator } from "@/components/ui";
+import {
+  Button,
+  Separator,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const navItems = [
@@ -48,6 +56,20 @@ const navItems = [
 
 export function Navigation() {
   const pathname = usePathname();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    const saved = localStorage.getItem("sidebar_collapsed");
+    if (saved) setIsCollapsed(saved === "true");
+  }, []);
+
+  const toggleCollapse = () => {
+    const next = !isCollapsed;
+    setIsCollapsed(next);
+    localStorage.setItem("sidebar_collapsed", String(next));
+  };
 
   const handleSignOut = async () => {
     await signOut({
@@ -59,69 +81,143 @@ export function Navigation() {
     });
   };
 
+  if (!isMounted) return null; // Prevent hydration mismatch
+
   return (
     <>
-      {/* Desktop sidebar — hidden on mobile */}
-      <aside className="hidden md:flex w-64 flex-col bg-sidebar border-r border-border/70">
-        <div className="flex h-16 items-center px-4 border-b border-border/70">
-          <Logo />
-        </div>
-
-        <nav className="flex-1 space-y-1 px-3 py-4">
-          {navItems.map((item) => {
-            const isActive = pathname.startsWith(item.href);
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "group relative flex items-center gap-3 px-3 py-2.5 text-base transition-all rounded-sm hover:pl-4",
-                  isActive
-                    ? "bg-sidebar-accent text-primary font-semibold"
-                    : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-foreground",
-                )}
-              >
-                {/* Active Indicator */}
-                <div
-                  className={cn(
-                    "absolute left-0 h-6 w-1 rounded-r-full bg-primary transition-all duration-300 ease-in-out",
-                    isActive
-                      ? "opacity-100 scale-y-100"
-                      : "opacity-0 scale-y-0",
-                  )}
-                />
-
-                {isActive ? (
-                  <item.activeIcon className="size-5.5 shrink-0 transition-colors text-primary" />
-                ) : (
-                  <item.icon className="size-5.5 shrink-0 transition-colors group-hover:text-foreground stroke-[1.5]" />
-                )}
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
-
-        <Separator />
-
-        <div className="flex items-center justify-between px-3 py-3">
-          <ThemeToggle />
-
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleSignOut}
-            className="h-9 w-9 border-2 border-border"
+      <TooltipProvider delayDuration={0}>
+        {/* Desktop sidebar — hidden on mobile */}
+        <aside
+          className={cn(
+            "hidden md:flex flex-col bg-sidebar border-r border-border",
+            isCollapsed ? "w-14" : "w-64",
+          )}
+        >
+          <div
+            className={cn(
+              "flex md:h-14 h-12 items-center border-b border-border",
+              isCollapsed ? "justify-center px-0" : "px-4",
+            )}
           >
-            <IconLogout className="h-4 w-4 shrink-0" />
-            <span className="sr-only">Sign out</span>
-          </Button>
-        </div>
-      </aside>
+            <Logo collapsed={isCollapsed} onClick={toggleCollapse} />
+          </div>
+
+          <nav
+            className={cn(
+              "flex-1 py-4",
+              isCollapsed ? "px-2 space-y-2" : "px-3 space-y-1",
+            )}
+          >
+            {navItems.map((item) => {
+              const isActive = pathname.startsWith(item.href);
+
+              return (
+                <Tooltip key={item.href}>
+                  <TooltipTrigger asChild>
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        "group relative flex items-center rounded-sm overflow-hidden outline-none h-10",
+                        isActive
+                          ? isCollapsed
+                            ? "bg-primary text-background"
+                            : "bg-sidebar-accent text-primary"
+                          : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-foreground",
+                        isCollapsed
+                          ? "w-fit mx-auto justify-center p-1.5 h-fit"
+                          : "gap-3 px-3",
+                      )}
+                    >
+                      {/* Active Indicator */}
+                      {!isCollapsed && (
+                        <div
+                          className={cn(
+                            "absolute left-0 w-1 rounded-r-full bg-primary h-6 top-2",
+                            isActive
+                              ? "opacity-100 scale-y-100"
+                              : "opacity-0 scale-y-0",
+                          )}
+                        />
+                      )}
+
+                      {isActive ? (
+                        <item.activeIcon
+                          className={cn(isCollapsed ? "size-6" : "size-5.5")}
+                        />
+                      ) : (
+                        <item.icon className="stroke-[1.4] group-hover:text-foreground size-5.5" />
+                      )}
+
+                      <span
+                        className={cn(
+                          "whitespace-nowrap overflow-hidden",
+                          isCollapsed
+                            ? "w-0 opacity-0 ml-0"
+                            : "w-auto opacity-100 ml-0",
+                        )}
+                      >
+                        {item.label}
+                      </span>
+                    </Link>
+                  </TooltipTrigger>
+                  {isCollapsed && (
+                    <TooltipContent side="right" sideOffset={20}>
+                      {item.label}
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              );
+            })}
+          </nav>
+
+          <Separator />
+
+          <div
+            className={cn(
+              "flex overflow-hidden",
+              isCollapsed
+                ? "flex-col gap-2 items-center justify-center py-4"
+                : "items-center justify-between px-3 py-3",
+            )}
+          >
+            <Tooltip key="theme">
+              <TooltipTrigger asChild>
+                <div>
+                  <ThemeToggle />
+                </div>
+              </TooltipTrigger>
+              {isCollapsed && (
+                <TooltipContent side="right" sideOffset={20}>
+                  Theme
+                </TooltipContent>
+              )}
+            </Tooltip>
+
+            <Tooltip key="logout">
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={handleSignOut}
+                  className="border border-border shrink-0"
+                >
+                  <IconLogout className="size-4" />
+                  <span className="sr-only">Logout</span>
+                </Button>
+              </TooltipTrigger>
+
+              {isCollapsed && (
+                <TooltipContent side="right" sideOffset={20}>
+                  Logout
+                </TooltipContent>
+              )}
+            </Tooltip>
+          </div>
+        </aside>
+      </TooltipProvider>
 
       {/* Mobile bottom nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t-2 bg-background/80 backdrop-blur-lg md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/80 backdrop-blur-lg md:hidden">
         <div className="flex items-center justify-around p-2">
           {navItems.map((item) => {
             const isActive = pathname.startsWith(item.href);
