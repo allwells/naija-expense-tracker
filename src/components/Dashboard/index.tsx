@@ -5,7 +5,6 @@ import { MonthlyTrendChart } from "./MonthlyTrendChart";
 import { SpendByCategoryChart } from "./SpendByCategoryChart";
 import { DeductiblesChart } from "./DeductiblesChart";
 import { TaxStatusCard } from "./TaxStatusCard";
-import { DashboardFilters } from "./DashboardFilters";
 import type { DashboardData } from "@/lib/analytics-service";
 
 interface DashboardProps {
@@ -16,10 +15,6 @@ interface DashboardProps {
 export function DashboardClient({ data, activePreset }: DashboardProps) {
   return (
     <div className="flex flex-col gap-4 pb-8">
-      <div className="flex w-full items-center justify-end">
-        <DashboardFilters />
-      </div>
-
       <StatsRow stats={data.stats} activePreset={activePreset} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

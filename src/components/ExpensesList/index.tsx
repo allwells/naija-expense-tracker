@@ -2,11 +2,17 @@
 
 import { toast } from "sonner";
 import { IconPlus, IconTrendingDown } from "@tabler/icons-react";
-import { ExpenseFilters } from "./ExpenseFilters";
 import { Button, Skeleton } from "@/components/ui";
 import { ExpenseForm } from "@/components/ExpenseForm";
 import { ExpenseDetailModal } from "./ExpenseDetailModal";
-import { useState, useCallback, useMemo, useTransition, useRef } from "react";
+import {
+  useState,
+  useCallback,
+  useMemo,
+  useTransition,
+  useRef,
+  useEffect,
+} from "react";
 import { ExpensesTable, ExpensesTableSkeleton } from "./ExpensesTable";
 import { ExpensesCards, ExpensesCardsSkeleton } from "./ExpensesCards";
 import { deleteExpenseAction } from "@/app/actions/expense-actions";
@@ -58,6 +64,16 @@ export function ExpensesList({
   const pullStartYRef = useRef(0);
   const isPullingRef = useRef(false);
   const REFRESH_THRESHOLD = 80;
+
+  useEffect(() => {
+    const handleOpenForm = () => {
+      setEditExpense(undefined);
+      setFormOpen(true);
+    };
+    window.addEventListener("open-expense-form", handleOpenForm);
+    return () =>
+      window.removeEventListener("open-expense-form", handleOpenForm);
+  }, []);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     // Only pull to refresh if we are at the top of the page
@@ -222,39 +238,13 @@ export function ExpensesList({
           transition: isPullingRef.current ? "none" : "transform 0.3s ease-out",
         }}
       >
-        {/* Header row */}
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
-            {isLoading ? (
-              <div className="h-5 w-24 animate-pulse rounded bg-muted" />
-            ) : (
-              `${total} expense${total !== 1 ? "s" : ""}`
-            )}
-          </div>
-
-          <div className="w-fit flex justify-center items-center gap-4">
-            {isLoading ? (
-              <>
-                <Skeleton className="h-8 w-24" />
-                <Skeleton className="hidden md:block h-8 w-32" />
-              </>
-            ) : (
-              <>
-                {/* Filters */}
-                <ExpenseFilters />
-
-                {/* Desktop add button */}
-                <Button
-                  size="sm"
-                  className="hidden md:flex"
-                  onClick={openCreate}
-                >
-                  <IconPlus className="size-4" />
-                  Add Expense
-                </Button>
-              </>
-            )}
-          </div>
+        {/* Simple meta info info row */}
+        <div className="text-sm text-muted-foreground">
+          {isLoading ? (
+            <div className="h-5 w-24 animate-pulse rounded bg-muted" />
+          ) : (
+            `${total} expense${total !== 1 ? "s" : ""}`
+          )}
         </div>
 
         {/* Lists */}

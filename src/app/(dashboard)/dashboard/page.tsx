@@ -2,15 +2,13 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui";
 import { Header } from "@/components/Header";
 import { DashboardClient } from "@/components/Dashboard";
+import { DashboardFilters } from "@/components/Dashboard/DashboardFilters";
 import { getDashboardDataAction } from "@/app/actions/analytics-actions";
 
 function DashboardSkeleton() {
   return (
-    <div className="flex flex-col gap-4 pb-8 px-4 md:px-6">
-      {/* Filters Skeleton */}
-      <div className="flex w-full items-center justify-end">
-        <Skeleton className="h-8 w-24" />
-      </div>
+    <div className="flex flex-col gap-4 pb-8">
+      {/* StatsRow Skeleton */}
 
       {/* StatsRow Skeleton */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -63,26 +61,31 @@ async function DashboardContent({ searchParams }: DashboardContentProps) {
 
   const data = await getDashboardDataAction({ from, to, category, tag });
 
-  return (
-    <div className="px-4 md:px-6">
-      <DashboardClient data={data} activePreset={preset} />
-    </div>
-  );
+  return <DashboardClient data={data} activePreset={preset} />;
 }
 
-export default function DashboardPage({
+export default async function DashboardPage({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const resolvedParams = await searchParams;
+  const paramsKey = JSON.stringify(resolvedParams);
+
   return (
     <div className="w-full">
       <Header title="Dashboard" />
 
-      <main className="mt-8">
-        <Suspense fallback={<DashboardSkeleton />}>
-          <DashboardContent searchParams={searchParams} />
-        </Suspense>
+      <main className="mt-8 px-4 md:px-6">
+        <div className="max-w-12xl mx-auto">
+          <div className="flex w-full items-center justify-end mb-4">
+            <DashboardFilters />
+          </div>
+
+          <Suspense key={paramsKey} fallback={<DashboardSkeleton />}>
+            <DashboardContent searchParams={searchParams} />
+          </Suspense>
+        </div>
       </main>
     </div>
   );

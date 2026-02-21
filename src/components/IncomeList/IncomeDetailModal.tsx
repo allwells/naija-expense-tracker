@@ -47,7 +47,7 @@ export function IncomeDetailModal({
         <div className="space-y-3 text-sm mt-4">
           {/* Amount */}
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Amount (NGN)</span>
+            <span className="text-muted-foreground">Amount</span>
             <span className="font-mono font-bold tabular-nums text-lg md:text-xl leading-none">
               {formatAmount(income.amount_ngn)}
             </span>

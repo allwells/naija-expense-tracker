@@ -24,6 +24,7 @@ import { useState } from "react";
 import type { ProfileRow } from "@/types/database";
 import type { Resolver } from "react-hook-form";
 import { updateProfileAction } from "@/app/actions/profile-actions";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const taxSettingsSchema = z.object({
   pension_rate: z.coerce.number().min(0).max(100, "Cannot exceed 100%"),
@@ -35,6 +36,7 @@ type TaxSettingsValues = z.infer<typeof taxSettingsSchema>;
 
 export function TaxSettingsForm({ profile }: { profile: ProfileRow }) {
   const [isLoading, setIsLoading] = useState(false);
+  const { convert, convertToNgn, symbol, format } = useCurrency();
 
   // DB stores rates as decimals (e.g., 0.08), form displays as percentages (e.g., 8)
   const form = useForm<TaxSettingsValues>({
@@ -44,7 +46,9 @@ export function TaxSettingsForm({ profile }: { profile: ProfileRow }) {
     defaultValues: {
       pension_rate: (profile.pension_rate ?? 0.08) * 100,
       nhf_rate: (profile.nhf_rate ?? 0.025) * 100,
-      monthly_rent_ngn: profile.monthly_rent_ngn ?? 0,
+      monthly_rent_ngn: profile.monthly_rent_ngn
+        ? convert(profile.monthly_rent_ngn)
+        : 0,
     },
   });
 
@@ -54,7 +58,9 @@ export function TaxSettingsForm({ profile }: { profile: ProfileRow }) {
     const updateData = {
       pension_rate: data.pension_rate / 100,
       nhf_rate: data.nhf_rate / 100,
-      monthly_rent_ngn: data.monthly_rent_ngn,
+      monthly_rent_ngn: data.monthly_rent_ngn
+        ? convertToNgn(data.monthly_rent_ngn)
+        : 0,
     };
 
     const result = await updateProfileAction(updateData);
@@ -135,7 +141,7 @@ export function TaxSettingsForm({ profile }: { profile: ProfileRow }) {
                 name="monthly_rent_ngn"
                 render={({ field }) => (
                   <FormItem className="md:col-span-2">
-                    <FormLabel>Monthly Rent Paid (₦)</FormLabel>
+                    <FormLabel>Monthly Rent Paid ({symbol})</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -146,7 +152,7 @@ export function TaxSettingsForm({ profile }: { profile: ProfileRow }) {
                     </FormControl>
                     <FormDescription className="text-xs">
                       Used to calculate Rent Relief (20% of annual rent, capped
-                      at ₦500k).
+                      at {format(500_000, true)}).
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

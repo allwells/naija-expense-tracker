@@ -28,6 +28,7 @@ import { Separator } from "@/components/ui/separator";
 import { IconCalendar, IconLoader2 } from "@tabler/icons-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { EXPENSE_CATEGORY_LABELS, EXPENSE_TAG_LABELS } from "@/types/expense";
 import { ReceiptUploader } from "./ReceiptUploader";
 import { OcrScanner } from "./OcrScanner";
@@ -162,6 +163,7 @@ export function ExpenseFormFields({
   onSubmit,
   onCancel,
 }: ExpenseFormFieldsProps) {
+  const { currency } = useCurrency();
   const watchedCurrency = form.watch("original_currency");
   const watchedOriginalAmount = form.watch("original_amount");
 
@@ -236,12 +238,12 @@ export function ExpenseFormFields({
                 <FormItem>
                   <FormLabel>Currency</FormLabel>
                   <Select
-                    value={field.value ?? "NGN"}
+                    value={field.value ?? currency}
                     onValueChange={field.onChange}
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="NGN" />
+                        <SelectValue placeholder={currency} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -264,7 +266,7 @@ export function ExpenseFormFields({
               name="original_amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Original Amount</FormLabel>
+                  <FormLabel>Amount</FormLabel>
                   <FormControl>
                     <FormattedAmountInput
                       value={field.value}
@@ -285,7 +287,7 @@ export function ExpenseFormFields({
           name="amount_ngn"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Amount (₦ NGN)</FormLabel>
+              <FormLabel>Base Equivalent (₦ NGN)</FormLabel>
               <FormControl>
                 <FormattedAmountInput
                   value={field.value}

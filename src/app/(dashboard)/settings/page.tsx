@@ -29,7 +29,9 @@ export default async function SettingsPage() {
     <div className="w-full">
       <Header title="Settings" />
       <main className="mt-8 px-4 md:px-6">
-        <SettingsClient profile={profile} />
+        <div className="max-w-12xl mx-auto">
+          <SettingsClient profile={profile} />
+        </div>
       </main>
     </div>
   );

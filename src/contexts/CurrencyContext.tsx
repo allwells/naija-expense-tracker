@@ -7,7 +7,7 @@ import { formatAmount, getCurrencySymbol } from "@/lib/format";
 interface CurrencyContextValue {
   currency: string;
   isLoading: boolean;
-  refreshRates: () => void;
+  refreshRates: (force?: boolean) => void;
   /**
    * Converts an NGN amount to the user's preferred currency
    * and returns the formatted string (with symbol).
@@ -21,6 +21,10 @@ interface CurrencyContextValue {
    * Return the currency symbol
    */
   symbol: string;
+  /**
+   * Converts user's preferred currency back to NGN.
+   */
+  convertToNgn: (amountUserCurrency: number) => number;
 }
 
 const CurrencyContext = createContext<CurrencyContextValue | null>(null);
@@ -50,12 +54,20 @@ export function CurrencyProvider({
       return formatAmount(converted, userCurrency, compact);
     };
 
+    const convertToNgn = (amountUserCurrency: number) => {
+      if (userCurrency === "NGN") return amountUserCurrency;
+      const rate = getRate(userCurrency, "NGN");
+      if (!rate) return amountUserCurrency; // Fallback
+      return amountUserCurrency * rate; // Since rate is target/base (e.g. 1500 for USD->NGN), we multiply.
+    };
+
     return {
       currency: userCurrency,
       isLoading,
       refreshRates: refresh,
       format,
       convert,
+      convertToNgn,
       symbol: getCurrencySymbol(userCurrency),
     };
   }, [userCurrency, getRate, isLoading, refresh]);

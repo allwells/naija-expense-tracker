@@ -17,7 +17,7 @@ export function Logo({
       <div
         onClick={onClick}
         className={cn(
-          "flex h-6.5 w-6.5 items-center justify-center bg-foreground text-background rounded",
+          "flex h-6.5 w-6.5 items-center justify-center bg-foreground text-background rounded-xs",
           {
             "cursor-pointer": onClick,
           },

@@ -18,6 +18,8 @@ import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
 import type { ProfileUpdate } from "@/types/database";
 import type { Resolver } from "react-hook-form";
 
+import { useCurrency } from "@/contexts/CurrencyContext";
+
 const step2Schema = z.object({
   pension_rate: z.coerce.number().min(0).max(100, "Cannot exceed 100%"),
   nhf_rate: z.coerce.number().min(0).max(100, "Cannot exceed 100%"),
@@ -39,15 +41,28 @@ export function StepTaxPreferences({
   onBack,
   isSubmitting,
 }: StepTaxPreferencesProps) {
+  const { convert, convertToNgn, symbol, format } = useCurrency();
+
   // DB stores decimals (e.g., 0.08), form displays percentage (e.g., 8)
   const form = useForm<Step2Values>({
     resolver: zodResolver(step2Schema) as unknown as Resolver<Step2Values>,
     defaultValues: {
       pension_rate: (initialData.pension_rate ?? 0.08) * 100,
       nhf_rate: (initialData.nhf_rate ?? 0.025) * 100,
-      monthly_rent_ngn: initialData.monthly_rent_ngn || 0,
+      monthly_rent_ngn: initialData.monthly_rent_ngn
+        ? convert(initialData.monthly_rent_ngn)
+        : 0,
     },
   });
+
+  const onSubmit = (data: Step2Values) => {
+    onNext({
+      ...data,
+      monthly_rent_ngn: data.monthly_rent_ngn
+        ? convertToNgn(data.monthly_rent_ngn)
+        : 0,
+    });
+  };
 
   return (
     <div className="animate-in fade-in slide-in-from-right-4 duration-500">
@@ -62,7 +77,7 @@ export function StepTaxPreferences({
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onNext)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <FormField
               control={form.control}
@@ -111,7 +126,7 @@ export function StepTaxPreferences({
               name="monthly_rent_ngn"
               render={({ field }) => (
                 <FormItem className="sm:col-span-2">
-                  <FormLabel>Monthly Rent Paid (₦)</FormLabel>
+                  <FormLabel>Monthly Rent Paid ({symbol})</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -121,7 +136,8 @@ export function StepTaxPreferences({
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
-                    We use this to calculate up to ₦500k Rent Relief.
+                    We use this to calculate up to {format(500_000, true)} Rent
+                    Relief.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

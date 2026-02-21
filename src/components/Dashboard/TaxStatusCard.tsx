@@ -58,7 +58,9 @@ export function TaxStatusCard({ taxData, className }: TaxStatusCardProps) {
               {isExempt ? "CIT Exempt" : "CIT Liable"}
             </span>
             <p className="text-xs opacity-90 leading-tight">
-              {taxData.cit.reason}
+              {isExempt
+                ? `Turnover ${formatAmount(taxData.cit.annualTurnover, true)} ≤ ${formatAmount(100_000_000, true)} and Fixed Assets ${formatAmount(taxData.cit.fixedAssets, true)} ≤ ${formatAmount(250_000_000, true)} — exempt under 2026 Tax Reform Act`
+                : "Exceeds small business threshold — CIT @ 30% + Development Levy @ 4%"}
             </p>
           </div>
         </div>

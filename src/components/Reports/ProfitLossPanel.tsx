@@ -15,6 +15,7 @@ import {
   IconReceiptTax,
   IconWallet,
   IconArrowRight,
+  IconInfoCircle,
 } from "@tabler/icons-react";
 import type { FullTaxLiabilityResult } from "@/lib/tax-engine";
 
@@ -25,7 +26,23 @@ interface ProfitLossPanelProps {
 export function ProfitLossPanel({ taxData }: ProfitLossPanelProps) {
   const { format: formatAmount } = useCurrency();
 
-  if (!taxData) return null;
+  if (!taxData) {
+    return (
+      <Card className="transition-all p-0 gap-0 h-full border rounded-xl text-muted-foreground">
+        <CardHeader className="px-4 pt-4 pb-2 bg-muted/30 border-b border-border/50">
+          <CardTitle className="text-base leading-none font-medium flex items-center gap-2">
+            <IconScale className="size-5.5" />
+            Profit & Loss Summary
+          </CardTitle>
+        </CardHeader>
+
+        <CardContent className="pt-6 flex flex-col items-center h-full justify-center text-center p-8">
+          <IconInfoCircle className="size-8 stroke-[1.3] mb-3" />
+          <p className="md:text-base text-sm">No tax data available.</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const t = taxData.taxableProfit;
   const netAfterTax =
@@ -33,9 +50,9 @@ export function ProfitLossPanel({ taxData }: ProfitLossPanelProps) {
 
   return (
     <Card className="transition-all p-0 gap-0 h-full border rounded-xl">
-      <CardHeader className="p-4 bg-muted/30 border-b border-border/50">
+      <CardHeader className="px-4 pt-4 pb-2 bg-muted/30 border-b border-border/50">
         <CardTitle className="text-base leading-none flex items-center gap-2">
-          <IconScale className="size-5 text-primary" />
+          <IconScale className="size-5.5 text-primary" />
           Profit & Loss Summary
         </CardTitle>
       </CardHeader>

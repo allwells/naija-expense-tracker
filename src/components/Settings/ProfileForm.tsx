@@ -25,6 +25,8 @@ import type { ProfileRow } from "@/types/database";
 import type { Resolver } from "react-hook-form";
 import { updateProfileAction } from "@/app/actions/profile-actions";
 
+import { useCurrency } from "@/contexts/CurrencyContext";
+
 const profileSchema = z.object({
   full_name: z.string().min(2, "Name must be at least 2 characters"),
   business_name: z.string().optional(),
@@ -36,20 +38,34 @@ type ProfileValues = z.infer<typeof profileSchema>;
 
 export function ProfileForm({ profile }: { profile: ProfileRow }) {
   const [isLoading, setIsLoading] = useState(false);
+  const { convert, convertToNgn, symbol, format } = useCurrency();
 
   const form = useForm<ProfileValues>({
     resolver: zodResolver(profileSchema) as unknown as Resolver<ProfileValues>,
     defaultValues: {
       full_name: profile.full_name || "",
       business_name: profile.business_name || "",
-      annual_turnover_ngn: profile.annual_turnover_ngn || 0,
-      fixed_assets_ngn: profile.fixed_assets_ngn || 0,
+      annual_turnover_ngn: profile.annual_turnover_ngn
+        ? convert(profile.annual_turnover_ngn)
+        : 0,
+      fixed_assets_ngn: profile.fixed_assets_ngn
+        ? convert(profile.fixed_assets_ngn)
+        : 0,
     },
   });
 
   async function onSubmit(data: ProfileValues) {
     setIsLoading(true);
-    const result = await updateProfileAction(data);
+    const updateData = {
+      ...data,
+      annual_turnover_ngn: data.annual_turnover_ngn
+        ? convertToNgn(data.annual_turnover_ngn)
+        : 0,
+      fixed_assets_ngn: data.fixed_assets_ngn
+        ? convertToNgn(data.fixed_assets_ngn)
+        : 0,
+    };
+    const result = await updateProfileAction(updateData);
     setIsLoading(false);
 
     if (result.error) {
@@ -112,7 +128,7 @@ export function ProfileForm({ profile }: { profile: ProfileRow }) {
                 name="annual_turnover_ngn"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Estimated Annual Turnover (₦)</FormLabel>
+                    <FormLabel>Estimated Annual Turnover ({symbol})</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -122,7 +138,8 @@ export function ProfileForm({ profile }: { profile: ProfileRow }) {
                       />
                     </FormControl>
                     <FormDescription className="text-xs">
-                      Gross income for the tax year. Threshold: ₦100M.
+                      Gross income for the tax year. Threshold:{" "}
+                      {format(100_000_000, true)}.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -133,7 +150,7 @@ export function ProfileForm({ profile }: { profile: ProfileRow }) {
                 name="fixed_assets_ngn"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Estimated Fixed Assets (₦)</FormLabel>
+                    <FormLabel>Estimated Fixed Assets ({symbol})</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -143,8 +160,8 @@ export function ProfileForm({ profile }: { profile: ProfileRow }) {
                       />
                     </FormControl>
                     <FormDescription className="text-xs">
-                      Total value of company equipment/property. Threshold:
-                      ₦250M.
+                      Total value of company equipment/property. Threshold:{" "}
+                      {format(250_000_000, true)}.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

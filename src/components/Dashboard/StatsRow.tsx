@@ -1,4 +1,5 @@
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { getCurrencyLocale } from "@/lib/format";
 import type { TrendStat } from "@/lib/analytics-service";
 import {
   IconArrowUpRight,
@@ -28,8 +29,23 @@ interface StatsCardProps {
 }
 
 function StatsCard({ label, stat, icon: Icon, presetText }: StatsCardProps) {
-  const { format: formatAmount } = useCurrency();
-  const formattedValue = formatAmount(stat.value, true);
+  const { format, convert, currency } = useCurrency();
+  const convertedValue = convert(stat.value);
+
+  let formattedValue = "";
+  if (Math.abs(convertedValue) >= 1_000_000) {
+    // 1m and above: compact formatting
+    formattedValue = format(stat.value, true);
+  } else {
+    // Below 1m: full number, 1 decimal place
+    const locale = getCurrencyLocale(currency);
+    formattedValue = new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency,
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    }).format(convertedValue);
+  }
 
   let trendDisplay = "0.0%";
   let TrendIcon = IconMinus;

@@ -140,7 +140,7 @@ export function Navigation() {
                       {!isCollapsed && (
                         <div
                           className={cn(
-                            "absolute left-0 w-1 rounded-r-full bg-primary h-6 top-2",
+                            "absolute left-0 w-1 rounded-r-sm bg-primary h-6",
                             isActive
                               ? "opacity-100 scale-y-100"
                               : "opacity-0 scale-y-0",
@@ -153,7 +153,7 @@ export function Navigation() {
                           className={cn(isCollapsed ? "size-6" : "size-5.5")}
                         />
                       ) : (
-                        <item.icon className="stroke-[1.4] group-hover:text-foreground size-5.5" />
+                        <item.icon className="stroke-[1.3] group-hover:text-foreground size-5.5" />
                       )}
 
                       <span
@@ -168,8 +168,9 @@ export function Navigation() {
                       </span>
                     </Link>
                   </TooltipTrigger>
+
                   {isCollapsed && (
-                    <TooltipContent side="right" sideOffset={20}>
+                    <TooltipContent side="right" sideOffset={16}>
                       {item.label}
                     </TooltipContent>
                   )}
@@ -242,7 +243,7 @@ export function Navigation() {
                 {/* Active Indicator */}
                 <div
                   className={cn(
-                    "absolute -top-2 h-1 w-12 rounded-b-full bg-primary transition-all duration-300",
+                    "absolute -top-2 h-1 w-12 rounded-b-sm bg-primary transition-all duration-300",
                     isActive ? "opacity-100 scale-100" : "opacity-0 scale-0",
                   )}
                 />

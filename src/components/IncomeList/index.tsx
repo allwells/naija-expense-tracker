@@ -2,11 +2,17 @@
 
 import { toast } from "sonner";
 import { IconPlus, IconTrendingUp } from "@tabler/icons-react";
-import { IncomeFilters } from "./IncomeFilters";
 import { Button, Skeleton } from "@/components/ui";
 import { IncomeForm } from "@/components/IncomeForm";
 import { IncomeDetailModal } from "./IncomeDetailModal";
-import { useState, useCallback, useMemo, useTransition, useRef } from "react";
+import {
+  useState,
+  useCallback,
+  useMemo,
+  useTransition,
+  useRef,
+  useEffect,
+} from "react";
 import { IncomeTable, IncomeTableSkeleton } from "./IncomeTable";
 import { IncomeCards, IncomeCardsSkeleton } from "./IncomeCards";
 import { deleteIncomeAction } from "@/app/actions/income-actions";
@@ -60,6 +66,15 @@ export function IncomeList({
   const pullStartYRef = useRef(0);
   const isPullingRef = useRef(false);
   const REFRESH_THRESHOLD = 80;
+
+  useEffect(() => {
+    const handleOpenForm = () => {
+      setEditIncome(undefined);
+      setFormOpen(true);
+    };
+    window.addEventListener("open-income-form", handleOpenForm);
+    return () => window.removeEventListener("open-income-form", handleOpenForm);
+  }, []);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     // Only pull to refresh if we are at the top of the page
@@ -221,36 +236,13 @@ export function IncomeList({
           transition: isPullingRef.current ? "none" : "transform 0.3s ease-out",
         }}
       >
-        {/* Header row */}
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
-            {isLoading ? (
-              <div className="h-5 w-24 animate-pulse rounded bg-muted" />
-            ) : (
-              `${total} record${total !== 1 ? "s" : ""}`
-            )}
-          </div>
-
-          <div className="w-fit flex justify-center items-center gap-4">
-            {isLoading ? (
-              <>
-                <Skeleton className="h-8 w-24" />
-                <Skeleton className="hidden md:block h-8 w-32" />
-              </>
-            ) : (
-              <>
-                <IncomeFilters />
-                <Button
-                  size="sm"
-                  className="hidden md:flex"
-                  onClick={openCreate}
-                >
-                  <IconPlus className="size-4" />
-                  Add Income
-                </Button>
-              </>
-            )}
-          </div>
+        {/* Meta info row */}
+        <div className="text-sm text-muted-foreground">
+          {isLoading ? (
+            <div className="h-5 w-24 animate-pulse rounded bg-muted" />
+          ) : (
+            `${total} record${total !== 1 ? "s" : ""}`
+          )}
         </div>
 
         {/* Lists */}

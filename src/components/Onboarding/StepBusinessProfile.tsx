@@ -18,6 +18,8 @@ import { IconArrowRight } from "@tabler/icons-react";
 import type { ProfileUpdate } from "@/types/database";
 import type { Resolver } from "react-hook-form";
 
+import { useCurrency } from "@/contexts/CurrencyContext";
+
 const step1Schema = z.object({
   full_name: z.string().min(2, "Name must be at least 2 characters"),
   business_name: z.string().optional(),
@@ -38,15 +40,33 @@ export function StepBusinessProfile({
   onNext,
   isSubmitting,
 }: StepBusinessProfileProps) {
+  const { convert, convertToNgn, symbol, format } = useCurrency();
+
   const form = useForm<Step1Values>({
     resolver: zodResolver(step1Schema) as unknown as Resolver<Step1Values>,
     defaultValues: {
       full_name: initialData.full_name || "",
       business_name: initialData.business_name || "",
-      annual_turnover_ngn: initialData.annual_turnover_ngn || 0,
-      fixed_assets_ngn: initialData.fixed_assets_ngn || 0,
+      annual_turnover_ngn: initialData.annual_turnover_ngn
+        ? convert(initialData.annual_turnover_ngn)
+        : 0,
+      fixed_assets_ngn: initialData.fixed_assets_ngn
+        ? convert(initialData.fixed_assets_ngn)
+        : 0,
     },
   });
+
+  const onSubmit = (data: Step1Values) => {
+    onNext({
+      ...data,
+      annual_turnover_ngn: data.annual_turnover_ngn
+        ? convertToNgn(data.annual_turnover_ngn)
+        : 0,
+      fixed_assets_ngn: data.fixed_assets_ngn
+        ? convertToNgn(data.fixed_assets_ngn)
+        : 0,
+    });
+  };
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -61,7 +81,7 @@ export function StepBusinessProfile({
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onNext)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <FormField
               control={form.control}
@@ -102,7 +122,7 @@ export function StepBusinessProfile({
               name="annual_turnover_ngn"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Est. Annual Turnover (₦)</FormLabel>
+                  <FormLabel>Est. Annual Turnover ({symbol})</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -112,7 +132,7 @@ export function StepBusinessProfile({
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
-                    Gross income (CIT threshold: ₦100M).
+                    Gross income (CIT threshold: {format(100_000_000, true)}).
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -123,7 +143,7 @@ export function StepBusinessProfile({
               name="fixed_assets_ngn"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Est. Fixed Assets (₦)</FormLabel>
+                  <FormLabel>Est. Fixed Assets ({symbol})</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -133,7 +153,8 @@ export function StepBusinessProfile({
                     />
                   </FormControl>
                   <FormDescription className="text-xs">
-                    Company property (CIT threshold: ₦250M).
+                    Company property (CIT threshold: {format(250_000_000, true)}
+                    ).
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

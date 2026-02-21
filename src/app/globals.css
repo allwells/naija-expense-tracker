@@ -38,6 +38,8 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --radius-xs: calc(var(--radius) - 8px);
+  --radius: calc(var(--radius));
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -45,10 +47,18 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+
+  /* Container */
+  --container-8xl: 1408px;
+  --container-9xl: 1536px;
+  --container-10xl: 1664px;
+  --container-11xl: 1792px;
+  --container-12xl: 1920px;
 }
 
 :root {
-  --radius: 0.75rem;
+  /* --radius: 0.75rem; */
+  --radius: -4rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -148,4 +158,14 @@ button {
   textarea {
     font-size: 16px;
   }
+}
+
+/* Remove focus outlines from recharts components when clicked */
+.recharts-wrapper *:focus,
+.recharts-wrapper *:focus-visible,
+.recharts-surface:focus,
+.recharts-surface:focus-visible,
+.recharts-layer:focus,
+.recharts-layer:focus-visible {
+  outline: none !important;
 }

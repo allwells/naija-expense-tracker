@@ -23,6 +23,7 @@ import {
 } from "@/components/ui";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { useEffect, useState } from "react";
 import { INCOME_TYPE_LABELS } from "@/types/income";
 import type { UseFormReturn } from "react-hook-form";
@@ -133,6 +134,7 @@ export function IncomeFormFields({
   onSubmit,
   onCancel,
 }: IncomeFormFieldsProps) {
+  const { currency } = useCurrency();
   const watchedCurrency = form.watch("original_currency");
   const watchedOriginalAmount = form.watch("original_amount");
 
@@ -252,12 +254,12 @@ export function IncomeFormFields({
                 <FormItem>
                   <FormLabel>Currency</FormLabel>
                   <Select
-                    value={field.value ?? "NGN"}
+                    value={field.value ?? currency}
                     onValueChange={field.onChange}
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="NGN" />
+                        <SelectValue placeholder={currency} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -280,7 +282,7 @@ export function IncomeFormFields({
               name="original_amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Original Amount</FormLabel>
+                  <FormLabel>Amount</FormLabel>
                   <FormControl>
                     <FormattedAmountInput
                       value={field.value}
@@ -301,7 +303,7 @@ export function IncomeFormFields({
           name="amount_ngn"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Amount (₦ NGN)</FormLabel>
+              <FormLabel>Base Equivalent (₦ NGN)</FormLabel>
               <FormControl>
                 <FormattedAmountInput
                   value={field.value}
