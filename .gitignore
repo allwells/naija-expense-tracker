@@ -42,6 +42,6 @@ yarn-error.log*
 next-env.d.ts
 
 # Antigravity
-.context.md
-.agent/
-docs/
+# .context.md
+# .agent/
+# docs/

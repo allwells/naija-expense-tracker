@@ -183,7 +183,7 @@ export function IncomeFormFields({
                     selected={field.value ? new Date(field.value) : undefined}
                     onSelect={(date) => {
                       if (date) {
-                        field.onChange(date.toISOString().split("T")[0]);
+                        field.onChange(format(date, "yyyy-MM-dd"));
                       }
                     }}
                     disabled={(date) => date > new Date()}
@@ -357,10 +357,6 @@ export function IncomeFormFields({
                   className="resize-none min-h-20"
                   {...field}
                   value={field.value ?? ""}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    field.onChange(val === "" ? undefined : val);
-                  }}
                 />
               </FormControl>
               <FormMessage />

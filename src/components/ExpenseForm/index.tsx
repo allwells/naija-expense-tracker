@@ -25,6 +25,7 @@ export function ExpenseForm({ open, onClose, expense }: ExpenseFormProps) {
     handleCurrencyChange,
     onSubmit,
   } = useExpenseForm({
+    open,
     onSuccess: onClose,
     expense,
   });

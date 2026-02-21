@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useState, useEffect } from "react";
 import { toast } from "sonner";
+import { format } from "date-fns";
 import { createExpenseSchema } from "@/lib/schemas/expense";
 import type { CreateExpenseSchema } from "@/lib/schemas/expense";
 import {
@@ -17,11 +18,16 @@ import { useExchangeRates } from "@/hooks/use-exchange-rates";
 import type { Resolver, FieldValues } from "react-hook-form";
 
 interface UseExpenseFormOptions {
+  open: boolean;
   onSuccess: () => void;
   expense?: ExpenseRecord;
 }
 
-export function useExpenseForm({ onSuccess, expense }: UseExpenseFormOptions) {
+export function useExpenseForm({
+  open,
+  onSuccess,
+  expense,
+}: UseExpenseFormOptions) {
   const isEditing = Boolean(expense);
   const { getRate } = useExchangeRates();
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
@@ -30,7 +36,7 @@ export function useExpenseForm({ onSuccess, expense }: UseExpenseFormOptions) {
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const today = new Date().toISOString().split("T")[0] as string;
+  const today = format(new Date(), "yyyy-MM-dd");
 
   const emptyDefaults: CreateExpenseSchema = {
     date: today,
@@ -51,12 +57,13 @@ export function useExpenseForm({ onSuccess, expense }: UseExpenseFormOptions) {
     resolver: zodResolver(
       createExpenseSchema,
     ) as unknown as Resolver<CreateExpenseSchema>,
-    shouldUnregister: true,
     defaultValues: emptyDefaults,
   });
 
   // Re-populate form when expense changes (e.g. switching from view modal to info sheet)
   useEffect(() => {
+    if (!open) return; // Only process on open so we don't clear while closing
+
     if (expense) {
       form.reset({
         date: expense.date,
@@ -73,11 +80,26 @@ export function useExpenseForm({ onSuccess, expense }: UseExpenseFormOptions) {
         ocr_date: expense.ocr_date ?? undefined,
       });
       setReceiptPreviewUrl(expense.receipt_url ?? null);
+      setReceiptFile(null);
     } else {
-      form.reset(emptyDefaults);
+      form.reset({
+        date: format(new Date(), "yyyy-MM-dd"),
+        amount_ngn: undefined as unknown as number,
+        original_amount: undefined as unknown as number,
+        original_currency: "NGN",
+        exchange_rate: 1,
+        category: undefined as unknown as any,
+        tag: undefined as unknown as any,
+        description: "",
+        notes: "",
+        ocr_extracted: false,
+        ocr_amount: undefined as unknown as number,
+        ocr_date: undefined as unknown as string,
+      });
       setReceiptPreviewUrl(null);
+      setReceiptFile(null);
     }
-  }, [expense, form, today]);
+  }, [expense, form, open]);
 
   // Auto-convert foreign currency → NGN when currency/amount changes
   const handleCurrencyChange = useCallback(
@@ -151,7 +173,20 @@ export function useExpenseForm({ onSuccess, expense }: UseExpenseFormOptions) {
             : `${formatNGN(saved.amount_ngn)} · ${categoryLabel} added successfully.`,
         });
 
-        form.reset(emptyDefaults);
+        form.reset({
+          date: format(new Date(), "yyyy-MM-dd"),
+          amount_ngn: undefined as unknown as number,
+          original_amount: undefined as unknown as number,
+          original_currency: "NGN",
+          exchange_rate: 1,
+          category: undefined as unknown as any,
+          tag: undefined as unknown as any,
+          description: "",
+          notes: "",
+          ocr_extracted: false,
+          ocr_amount: undefined as unknown as number,
+          ocr_date: undefined as unknown as string,
+        });
         clearReceipt();
         onSuccess();
       } catch {

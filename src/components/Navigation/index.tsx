@@ -81,7 +81,15 @@ export function Navigation() {
     });
   };
 
-  if (!isMounted) return null; // Prevent hydration mismatch
+  if (!isMounted)
+    return (
+      <aside
+        className={cn(
+          "hidden md:flex bg-sidebar border-r",
+          isCollapsed ? "w-14" : "w-64",
+        )}
+      />
+    ); // Prevent hydration mismatch
 
   return (
     <>
@@ -89,7 +97,7 @@ export function Navigation() {
         {/* Desktop sidebar — hidden on mobile */}
         <aside
           className={cn(
-            "hidden md:flex flex-col bg-sidebar border-r border-border",
+            "hidden md:flex flex-col bg-sidebar border-r",
             isCollapsed ? "w-14" : "w-64",
           )}
         >

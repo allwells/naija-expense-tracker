@@ -14,6 +14,7 @@ interface IncomeFormProps {
 export function IncomeForm({ open, onClose, income }: IncomeFormProps) {
   const { form, isEditing, isSubmitting, handleCurrencyChange, onSubmit } =
     useIncomeForm({
+      open,
       onSuccess: onClose,
       income,
     });

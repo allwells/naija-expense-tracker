@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useState, useEffect } from "react";
 import { toast } from "sonner";
+import { format } from "date-fns";
 import { createIncomeSchema } from "@/lib/schemas/income";
 import type { CreateIncomeSchema } from "@/lib/schemas/income";
 import {
@@ -17,29 +18,27 @@ import { useExchangeRates } from "@/hooks/use-exchange-rates";
 import type { Resolver } from "react-hook-form";
 
 interface UseIncomeFormOptions {
+  open: boolean;
   onSuccess: () => void;
   income?: IncomeRecord;
 }
 
-export function useIncomeForm({ onSuccess, income }: UseIncomeFormOptions) {
+export function useIncomeForm({
+  open,
+  onSuccess,
+  income,
+}: UseIncomeFormOptions) {
   const isEditing = Boolean(income);
   const { getRate } = useExchangeRates();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const today = new Date().toISOString().split("T")[0] as string;
-
-  const defaults = {
-    date: today,
+  const emptyDefaults: CreateIncomeSchema = {
+    date: format(new Date(), "yyyy-MM-dd"),
     amount_ngn: undefined as unknown as number,
     original_amount: undefined as unknown as number,
     original_currency: "NGN",
     exchange_rate: 1,
-    income_type: undefined as unknown as
-      | "salary"
-      | "dividend"
-      | "freelance"
-      | "export"
-      | "other",
+    income_type: undefined as unknown as any,
     is_export_income: false,
     source: "",
     description: "",
@@ -49,11 +48,13 @@ export function useIncomeForm({ onSuccess, income }: UseIncomeFormOptions) {
     resolver: zodResolver(
       createIncomeSchema,
     ) as unknown as Resolver<CreateIncomeSchema>,
-    defaultValues: defaults,
+    defaultValues: emptyDefaults,
   });
 
   // Re-populate form when income record changes
   useEffect(() => {
+    if (!open) return; // Only process on open so we don't clear while closing
+
     if (income) {
       form.reset({
         date: income.date,
@@ -67,9 +68,19 @@ export function useIncomeForm({ onSuccess, income }: UseIncomeFormOptions) {
         is_export_income: income.is_export_income,
       });
     } else {
-      form.reset(defaults);
+      form.reset({
+        date: format(new Date(), "yyyy-MM-dd"),
+        amount_ngn: undefined as unknown as number,
+        original_amount: undefined as unknown as number,
+        original_currency: "NGN",
+        exchange_rate: 1,
+        income_type: undefined as unknown as any,
+        is_export_income: false,
+        source: "",
+        description: "",
+      });
     }
-  }, [income, form, today]);
+  }, [income, form, open]);
 
   // Auto-convert foreign currency → NGN when currency/amount changes
   const handleCurrencyChange = useCallback(
@@ -118,7 +129,17 @@ export function useIncomeForm({ onSuccess, income }: UseIncomeFormOptions) {
             : `${formatNGN(saved.amount_ngn)} from ${saved.source} logged.`,
         });
 
-        form.reset(defaults);
+        form.reset({
+          date: format(new Date(), "yyyy-MM-dd"),
+          amount_ngn: undefined as unknown as number,
+          original_amount: undefined as unknown as number,
+          original_currency: "NGN",
+          exchange_rate: 1,
+          income_type: undefined as unknown as any,
+          is_export_income: false,
+          source: "",
+          description: "",
+        });
         onSuccess();
       } catch {
         toast.error(isEditing ? "Income not updated" : "Income not saved", {

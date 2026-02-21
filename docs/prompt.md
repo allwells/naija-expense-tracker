@@ -586,8 +586,6 @@ First-time user sees a 3-step onboarding:
 
 #### 8.3 Mobile Polish
 
-- Bottom navigation bar with 5 tabs: Dashboard, Expenses, Income, Reports, Settings
-- Floating Action Button (FAB) on mobile for quick expense add
 - Touch-optimized form inputs (large tap targets, no zoom on focus)
 - Pull-to-refresh on expense list
 - Swipe-to-delete on expense cards

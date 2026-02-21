@@ -1,20 +1,64 @@
-import { IconChartPie } from "@tabler/icons-react";
+import { Suspense } from "react";
 import { Header } from "@/components/Header";
+import { Skeleton } from "@/components/ui";
+import { ReportsClient } from "@/components/Reports";
+import { getReportsDataAction } from "@/app/actions/analytics-actions";
 
-export default function ReportsPage() {
+function ReportsSkeleton() {
+  return (
+    <div className="flex flex-col gap-4 pb-8 px-4 md:px-6">
+      <div className="flex w-full items-center justify-end">
+        <Skeleton className="h-8 w-24" />
+      </div>
+      <Skeleton className="h-90 w-full rounded-xl" />
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Skeleton className="h-100 w-full rounded-xl" />
+        <Skeleton className="h-100 w-full rounded-xl" />
+      </div>
+    </div>
+  );
+}
+
+interface ReportsContentProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+async function ReportsContent({ searchParams }: ReportsContentProps) {
+  const resolvedParams = await searchParams;
+  const from =
+    typeof resolvedParams.from === "string" ? resolvedParams.from : undefined;
+  const to =
+    typeof resolvedParams.to === "string" ? resolvedParams.to : undefined;
+  const category =
+    typeof resolvedParams.category === "string"
+      ? resolvedParams.category
+      : undefined;
+  const tag =
+    typeof resolvedParams.tag === "string" ? resolvedParams.tag : undefined;
+
+  const data = await getReportsDataAction({ from, to, category, tag });
+
+  return (
+    <div className="px-4 md:px-6">
+      <ReportsClient data={data} />
+    </div>
+  );
+}
+
+export default function ReportsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   return (
     <div className="w-full">
-      <Header title="Reports" />
+      <Header title="Reports & Tax" />
 
-      <div className="mt-8 flex flex-col items-center justify-center py-16 px-4 text-center">
-        <div className="mb-4 flex h-16 w-16 items-center justify-center border-2 border-dashed border-border_muted rounded-full bg-muted/20">
-          <IconChartPie className="h-8 w-8 text-muted-foreground" />
-        </div>
-        <h3 className="text-base font-semibold">Reports coming soon</h3>
-        <p className="mt-1 max-w-xs text-sm text-muted-foreground">
-          Tax liability breakdown and P&L reports will be available in Phase 6.
-        </p>
-      </div>
+      <main className="mt-8">
+        <Suspense fallback={<ReportsSkeleton />}>
+          <ReportsContent searchParams={searchParams} />
+        </Suspense>
+      </main>
     </div>
   );
 }
