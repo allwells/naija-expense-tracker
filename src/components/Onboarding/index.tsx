@@ -66,6 +66,7 @@ export function OnboardingClient({ initialProfile }: OnboardingClientProps) {
             {step === 3 && "Finalize"}
           </span>
         </div>
+
         <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
           <div
             className="h-full bg-primary transition-all duration-500 ease-in-out rounded-full"
@@ -74,7 +75,7 @@ export function OnboardingClient({ initialProfile }: OnboardingClientProps) {
         </div>
       </div>
 
-      <Card className="md:p-6 p-4 min-h-[400px]">
+      <Card className="md:p-6 p-4 pt-8 md:pt-6 min-h-100">
         {step === 1 && (
           <StepBusinessProfile
             initialData={formData}

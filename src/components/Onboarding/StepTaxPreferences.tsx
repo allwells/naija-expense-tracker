@@ -1,8 +1,8 @@
 "use client";
 
+import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import {
   Form,
   FormControl,
@@ -11,9 +11,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+  Input,
+  Button,
+} from "@/components/ui";
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
 import type { ProfileUpdate } from "@/types/database";
 import type { Resolver } from "react-hook-form";
@@ -62,8 +62,8 @@ export function StepTaxPreferences({
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onNext)} className="space-y-6">
-          <div className="grid gap-6 sm:grid-cols-2">
+        <form onSubmit={form.handleSubmit(onNext)} className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
             <FormField
               control={form.control}
               name="pension_rate"
@@ -75,10 +75,12 @@ export function StepTaxPreferences({
                       type="number"
                       step="0.1"
                       {...field}
-                      className="text-[16px] md:text-sm font-mono"
+                      className="font-mono"
                     />
                   </FormControl>
-                  <FormDescription>Standard rate is 8%.</FormDescription>
+                  <FormDescription className="text-xs">
+                    Standard rate is 8%.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -94,10 +96,12 @@ export function StepTaxPreferences({
                       type="number"
                       step="0.1"
                       {...field}
-                      className="text-[16px] md:text-sm font-mono"
+                      className="font-mono"
                     />
                   </FormControl>
-                  <FormDescription>Standard rate is 2.5%.</FormDescription>
+                  <FormDescription className="text-xs">
+                    Standard rate is 2.5%.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -113,10 +117,10 @@ export function StepTaxPreferences({
                       type="number"
                       placeholder="0"
                       {...field}
-                      className="text-[16px] md:text-sm font-mono"
+                      className="font-mono"
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-xs">
                     We use this to calculate up to ₦500k Rent Relief.
                   </FormDescription>
                   <FormMessage />
@@ -125,18 +129,18 @@ export function StepTaxPreferences({
             />
           </div>
 
-          <div className="pt-4 flex flex-col-reverse sm:flex-row justify-between gap-4">
+          <div className="pt-4 flex flex-col-reverse sm:flex-row justify-between gap-4 mt-auto">
             <Button
               type="button"
               variant="outline"
               onClick={onBack}
               disabled={isSubmitting}
-              className="gap-2"
             >
               <IconArrowLeft className="size-4" />
               Back
             </Button>
-            <Button type="submit" disabled={isSubmitting} className="gap-2">
+
+            <Button type="submit" disabled={isSubmitting}>
               Next Step
               <IconArrowRight className="size-4" />
             </Button>

@@ -1,8 +1,8 @@
 "use client";
 
+import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import {
   Form,
   FormControl,
@@ -11,9 +11,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+  Input,
+  Button,
+} from "@/components/ui";
 import { IconArrowRight } from "@tabler/icons-react";
 import type { ProfileUpdate } from "@/types/database";
 import type { Resolver } from "react-hook-form";
@@ -61,8 +61,8 @@ export function StepBusinessProfile({
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onNext)} className="space-y-6">
-          <div className="grid gap-6 sm:grid-cols-2">
+        <form onSubmit={form.handleSubmit(onNext)} className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
             <FormField
               control={form.control}
               name="full_name"
@@ -73,7 +73,7 @@ export function StepBusinessProfile({
                     <Input
                       placeholder="John Doe"
                       {...field}
-                      className="text-[16px] md:text-sm"
+                      className="text-sm"
                     />
                   </FormControl>
                   <FormMessage />
@@ -90,7 +90,7 @@ export function StepBusinessProfile({
                     <Input
                       placeholder="Doe Enterprises"
                       {...field}
-                      className="text-[16px] md:text-sm"
+                      className="text-sm"
                     />
                   </FormControl>
                   <FormMessage />
@@ -108,10 +108,10 @@ export function StepBusinessProfile({
                       type="number"
                       placeholder="0"
                       {...field}
-                      className="text-[16px] md:text-sm font-mono"
+                      className="text-sm font-mono"
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-xs">
                     Gross income (CIT threshold: ₦100M).
                   </FormDescription>
                   <FormMessage />
@@ -129,10 +129,10 @@ export function StepBusinessProfile({
                       type="number"
                       placeholder="0"
                       {...field}
-                      className="text-[16px] md:text-sm font-mono"
+                      className="text-sm font-mono"
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="text-xs">
                     Company property (CIT threshold: ₦250M).
                   </FormDescription>
                   <FormMessage />
