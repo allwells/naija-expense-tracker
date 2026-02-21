@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui";
 import { IconAlertTriangle } from "@tabler/icons-react";
 
 export default function GlobalError({
@@ -30,9 +30,9 @@ export default function GlobalError({
       </p>
       <div className="flex gap-4">
         <Button onClick={() => window.location.reload()} variant="outline">
-          Refresh Page
+          Refresh page
         </Button>
-        <Button onClick={() => reset()}>Try Again</Button>
+        <Button onClick={() => reset()}>Try again</Button>
       </div>
     </div>
   );

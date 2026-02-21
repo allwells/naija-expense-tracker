@@ -19,7 +19,7 @@ export default async function OnboardingPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center">
-      <header className="w-full h-14 border-b flex justify-center items-center sticky top-0 bg-background/95 backdrop-blur z-10">
+      <header className="w-full h-14 px-4 border-b flex justify-center items-center sticky top-0 bg-background/95 backdrop-blur z-10">
         <div className="container flex justify-between items-center">
           <Logo compact />
 
