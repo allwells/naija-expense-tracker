@@ -19,11 +19,12 @@ const fetcher = (url: string) =>
     .then((json: ApiResponse) => json.data);
 
 export function useExchangeRates() {
-  const { data, error, isLoading, mutate } = useSWR<RatesPayload | null>(
-    "/api/exchange-rates",
-    fetcher,
-    { refreshInterval: 21_600_000 }, // refresh every 6 hours
-  );
+  const { data, error, isLoading, isValidating, mutate } =
+    useSWR<RatesPayload | null>(
+      "/api/exchange-rates",
+      fetcher,
+      { refreshInterval: 21_600_000 }, // refresh every 6 hours
+    );
 
   const refresh = useCallback(
     async (force = false) => {
@@ -41,7 +42,7 @@ export function useExchangeRates() {
   return {
     rates: data?.rates ?? {},
     lastUpdated: data?.timestamp,
-    isLoading,
+    isLoading: isLoading || isValidating,
     error: error as Error | undefined,
     refresh,
     getRate: (from: string, to = "NGN"): number | null =>

@@ -1,11 +1,11 @@
 "use client";
 
-import { useTheme } from "next-themes";
 import Link from "next/link";
-import { signOut, useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
+import { signOut, useSession } from "@/lib/auth-client";
 import {
-  IconUserFilled,
+  IconUser,
   IconLogout,
   IconSun,
   IconMoon,
@@ -14,14 +14,20 @@ import {
 } from "@tabler/icons-react";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import {
+  getCurrencySymbol,
+  formatAmount as formatBaseAmount,
+} from "@/lib/format";
+import { toast } from "sonner";
+import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+  Button,
+  Skeleton,
+} from "@/components/ui";
 
 interface HeaderProps {
   title: string;
@@ -32,7 +38,13 @@ interface HeaderProps {
 export function Header({ title, className, children }: HeaderProps) {
   const { theme, setTheme } = useTheme();
   const { data: session } = useSession();
-  const { currency, refreshRates, isLoading } = useCurrency();
+  const {
+    currency,
+    refreshRates,
+    isLoading,
+    format: formatAmount,
+    convertToNgn,
+  } = useCurrency();
 
   const handleSignOut = async () => {
     await signOut({
@@ -60,19 +72,42 @@ export function Header({ title, className, children }: HeaderProps) {
 
         {/* Global Currency Refresh Button (only useful if currency is not NGN or for global refresh context) */}
         {currency !== "NGN" && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 gap-1.5 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 lg:px-3 text-muted-foreground hidden sm:flex"
-            onClick={() => refreshRates()}
-            disabled={isLoading}
-            title="Refresh live exchange rates"
-          >
-            <IconRefresh
-              className={cn("size-3.5", isLoading && "animate-spin")}
-            />
-            <span className="sr-only lg:not-sr-only">Refresh Rates</span>
-          </Button>
+          <div className="flex items-center gap-2">
+            {isLoading ? (
+              <Skeleton className="h-8 w-16 bg-muted-foreground/10" />
+            ) : (
+              <span className="text-xs font-mono font-medium text-muted-foreground px-2 bg-muted/50 h-8 flex items-center border border-dashed rounded-sm">
+                {getCurrencySymbol(currency)}1 ={" "}
+                {formatBaseAmount(convertToNgn(1), "NGN")}
+              </span>
+            )}
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={async () => {
+                try {
+                  await refreshRates(true);
+                } catch (error) {
+                  toast.error("Refresh Failed", {
+                    description:
+                      "Could not update exchange rates. Please try again.",
+                  });
+                }
+              }}
+              disabled={isLoading}
+              title="Refresh live exchange rates"
+              className="px-2! text-muted-foreground"
+            >
+              <IconRefresh
+                className={cn("size-4 stroke-[1.3]", {
+                  "animate-spin": isLoading,
+                })}
+              />
+              <span className="sr-only lg:not-sr-only">
+                {isLoading ? "Refreshing..." : "Refresh Rates"}
+              </span>
+            </Button>
+          </div>
         )}
 
         {/* Profile Dropdown */}
@@ -80,7 +115,7 @@ export function Header({ title, className, children }: HeaderProps) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon" className="overflow-hidden">
-                <IconUserFilled className="size-6.5 -mb-2 stroke-[1.2] text-primary/30" />
+                <IconUser className="size-8.5 -mb-3 stroke-[0.85] text-primary/30" />
                 <span className="sr-only">Toggle user menu</span>
               </Button>
             </DropdownMenuTrigger>
@@ -96,48 +131,33 @@ export function Header({ title, className, children }: HeaderProps) {
                   </p>
                 </div>
               </DropdownMenuLabel>
+
               <DropdownMenuSeparator />
+
               <DropdownMenuItem asChild>
-                <Link href="/settings" className="cursor-pointer">
+                <Link href="/settings">
                   <IconSettings className="size-5" />
                   <span>Settings</span>
                 </Link>
               </DropdownMenuItem>
 
-              {currency !== "NGN" && (
-                <DropdownMenuItem
-                  onClick={() => refreshRates()}
-                  disabled={isLoading}
-                  className="sm:hidden cursor-pointer"
-                >
-                  <IconRefresh
-                    className={cn("size-5", isLoading && "animate-spin")}
-                  />
-                  <span>Refresh Rates</span>
-                </DropdownMenuItem>
-              )}
+              <DropdownMenuItem
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              >
+                <div className="relative flex h-fit w-fit shrink-0 items-center justify-center">
+                  <IconSun className="size-5 shrink-0 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                  <IconMoon className="absolute size-5 shrink-0 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                </div>
+                <span>Toggle Theme</span>
+              </DropdownMenuItem>
 
-              {/* Mobile Only Items */}
-              <div className="md:hidden">
-                {/* <DropdownMenuSeparator /> */}
-                <DropdownMenuItem
-                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                >
-                  <div className="relative flex h-fit w-fit shrink-0 items-center justify-center">
-                    <IconSun className="size-5 shrink-0 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                    <IconMoon className="absolute size-5 shrink-0 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                  </div>
-                  <span>Toggle Theme</span>
-                </DropdownMenuItem>
-                {/* <DropdownMenuSeparator /> */}
-                <DropdownMenuItem
-                  onClick={handleSignOut}
-                  className="text-destructive focus:text-destructive"
-                >
-                  <IconLogout className="size-5 text-destructive" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
-              </div>
+              <DropdownMenuItem
+                onClick={handleSignOut}
+                className="text-destructive focus:text-destructive"
+              >
+                <IconLogout className="size-5 text-destructive" />
+                <span>Log out</span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

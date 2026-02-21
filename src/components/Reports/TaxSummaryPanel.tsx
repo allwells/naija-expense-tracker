@@ -29,16 +29,16 @@ export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
   if (!taxData) {
     return (
       <Card className="transition-all p-0 gap-0 h-full border rounded-xl">
-        <CardHeader className="p-4 bg-muted/30 border-b border-border/50">
+        <CardHeader className="px-4 pt-4 pb-2 bg-muted/30 border-b border-border/50">
           <CardTitle className="text-base leading-none font-medium flex items-center gap-2">
-            <IconReceiptTax className="size-5 text-muted-foreground" />
-            Full Year Tax Summary
+            <IconReportMoney className="size-5.5 text-muted-foreground" />
+            Tax Summary
           </CardTitle>
         </CardHeader>
 
-        <CardContent className="pt-6 flex flex-col items-center justify-center text-center text-muted-foreground p-8">
-          <IconInfoCircle className="size-8 mb-3 opacity-50" />
-          <p className="text-sm">No tax data available.</p>
+        <CardContent className="pt-6 flex flex-col items-center h-full justify-center text-center text-muted-foreground p-8">
+          <IconInfoCircle className="size-8 stroke-[1.3] mb-3" />
+          <p className="md:text-base text-sm">No tax data available.</p>
         </CardContent>
       </Card>
     );
@@ -46,7 +46,7 @@ export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
 
   return (
     <Card className="transition-all p-0 gap-0 h-full border rounded-xl">
-      <CardHeader className="p-4 bg-muted/30 border-b border-border/50">
+      <CardHeader className="px-4 pt-4 pb-2 bg-muted/30 border-b border-border/50">
         <CardTitle className="text-base leading-none flex items-center gap-2">
           <IconReportMoney className="size-5 text-primary" />
           {taxData.taxYear} Official Tax Summary
@@ -69,7 +69,7 @@ export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
                 <span className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                   <IconInfoCircle className="size-3" />
                   {taxData.isSmallBusinessExempt
-                    ? taxData.cit.reason
+                    ? `Turnover ${formatAmount(taxData.cit.annualTurnover, true)} ≤ ${formatAmount(100_000_000, true)} and Fixed Assets ${formatAmount(taxData.cit.fixedAssets, true)} ≤ ${formatAmount(250_000_000, true)} — exempt under 2026 Tax Reform Act`
                     : "Standard 30% rate"}
                 </span>
               </div>
@@ -115,7 +115,10 @@ export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
                     <div className="flex items-center gap-2 text-muted-foreground group-hover:text-foreground transition-colors">
                       <IconArrowRight className="size-3 opacity-50" />
                       <span>
-                        {bracket.bracket} @ {(bracket.rate * 100).toFixed(0)}%
+                        {bracket.max === Infinity
+                          ? `Above ${formatAmount(bracket.min)}`
+                          : `${formatAmount(bracket.min)} – ${formatAmount(bracket.max)}`}{" "}
+                        @ {(bracket.rate * 100).toFixed(0)}%
                       </span>
                     </div>
                     <span className="font-mono text-muted-foreground group-hover:text-foreground transition-colors">

@@ -68,6 +68,8 @@ export const DEDUCTIBILITY: Record<string, number> = {
 
 export interface CITResult {
   exempt: boolean;
+  annualTurnover: number;
+  fixedAssets: number;
   taxableProfit: number;
   cit: number;
   developmentLevy: number;
@@ -78,6 +80,8 @@ export interface CITResult {
 
 export interface PITBracketBreakdown {
   bracket: string;
+  min: number;
+  max: number;
   taxableAmount: number;
   rate: number;
   tax: number;
@@ -146,6 +150,8 @@ export function computeCIT(
   if (exempt) {
     return {
       exempt: true,
+      annualTurnover,
+      fixedAssets,
       taxableProfit,
       cit: 0,
       developmentLevy: 0,
@@ -159,6 +165,8 @@ export function computeCIT(
 
   return {
     exempt: false,
+    annualTurnover,
+    fixedAssets,
     taxableProfit,
     cit,
     developmentLevy,
@@ -207,6 +215,8 @@ export function computePIT(
           bracket.max === Infinity
             ? `Above ₦${bracket.min.toLocaleString()}`
             : `₦${bracket.min.toLocaleString()} – ₦${bracket.max.toLocaleString()}`,
+        min: bracket.min,
+        max: bracket.max,
         taxableAmount: taxableInBracket,
         rate: bracket.rate,
         tax,

@@ -34,9 +34,12 @@ export function formatAmount(
 ): string {
   const locale = getCurrencyLocale(currency);
 
-  if (compact && Math.abs(amount) >= 1_000_000) {
+  if (compact && Math.abs(amount) >= 1_000) {
     const symbol = getCurrencySymbol(currency);
-    return `${symbol}${(amount / 1_000_000).toFixed(2)}M`;
+    // Use formatCompactNumber but strip the sign if it returns one, and handle sign manually
+    const compactStr = formatCompactNumber(Math.abs(amount));
+    const sign = amount < 0 ? "-" : "";
+    return `${sign}${symbol}${compactStr}`;
   }
 
   return new Intl.NumberFormat(locale, {
@@ -58,14 +61,14 @@ export function formatCompactNumber(amount: number): string {
   const sign = amount < 0 ? "-" : "";
 
   if (absAmount >= 1_000_000_000) {
-    return `${sign}${Number((absAmount / 1_000_000_000).toFixed(2))}b`;
+    return `${sign}${Number((absAmount / 1_000_000_000).toFixed(1))}B`;
   }
   if (absAmount >= 1_000_000) {
-    return `${sign}${Number((absAmount / 1_000_000).toFixed(2))}m`;
+    return `${sign}${Number((absAmount / 1_000_000).toFixed(1))}M`;
   }
   if (absAmount >= 1_000) {
-    return `${sign}${Number((absAmount / 1_000).toFixed(2))}k`;
+    return `${sign}${Number((absAmount / 1_000).toFixed(1))}K`;
   }
 
-  return `${sign}${Number(absAmount.toFixed(2))}`;
+  return `${sign}${Number(absAmount.toFixed(1))}`;
 }
