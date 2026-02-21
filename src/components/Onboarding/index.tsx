@@ -74,7 +74,7 @@ export function OnboardingClient({ initialProfile }: OnboardingClientProps) {
         </div>
       </div>
 
-      <Card className="p-4 min-h-[400px]">
+      <Card className="md:p-6 p-4 min-h-[400px]">
         {step === 1 && (
           <StepBusinessProfile
             initialData={formData}

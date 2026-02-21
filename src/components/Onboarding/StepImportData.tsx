@@ -3,7 +3,13 @@
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui";
-import { IconArrowLeft, IconCheck } from "@tabler/icons-react";
+import {
+  IconArrowLeft,
+  IconCheck,
+  IconReceiptTax,
+  IconScan,
+  IconChartPie,
+} from "@tabler/icons-react";
 
 interface StepImportDataProps {
   onBack: () => void;
@@ -33,19 +39,58 @@ export function StepImportData({
   };
 
   return (
-    <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+    <div className="animate-in fade-in slide-in-from-right-4 duration-500 h-full flex flex-col flex-1">
       <div className="space-y-2 mb-8 text-center sm:text-left">
         <h2 className="text-2xl font-semibold tracking-tight">
           You're All Set!
         </h2>
         <p className="text-muted-foreground">
           Your tax engine is configured. You can now start logging income and
-          expenses. (CSV importing functionality will be available in a future
-          update).
+          expenses to take control of your financial future.
         </p>
       </div>
 
-      <div className="pt-4 flex flex-col-reverse sm:flex-row justify-between gap-4">
+      <div className="flex-1 flex flex-col justify-center gap-6 mb-8 mt-4">
+        <div className="flex gap-4 items-start">
+          <div className="p-2.5 bg-primary/10 rounded-lg shrink-0 mt-0.5">
+            <IconReceiptTax className="size-5 text-primary" />
+          </div>
+          <div>
+            <h4 className="font-medium text-sm">Smart Tax Engine</h4>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              Live estimations based on your profile inputs and real-world
+              deductions.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex gap-4 items-start">
+          <div className="p-2.5 bg-primary/10 rounded-lg shrink-0 mt-0.5">
+            <IconScan className="size-5 text-primary" />
+          </div>
+          <div>
+            <h4 className="font-medium text-sm">AI Receipt Scanner</h4>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              Instantly extract amounts and dates using offline OCR processing.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex gap-4 items-start">
+          <div className="p-2.5 bg-primary/10 rounded-lg shrink-0 mt-0.5">
+            <IconChartPie className="size-5 text-primary" />
+          </div>
+          <div>
+            <h4 className="font-medium text-sm">Rich Visualizations</h4>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              Track profits, detect trends, and analyze your financial health
+              over time.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="pt-4 flex flex-col-reverse sm:flex-row justify-between gap-4 mt-auto">
         <Button
           type="button"
           variant="outline"
