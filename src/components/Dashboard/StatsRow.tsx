@@ -33,7 +33,7 @@ function StatsCard({ label, stat, icon: Icon, presetText }: StatsCardProps) {
   const convertedValue = convert(stat.value);
 
   let formattedValue = "";
-  if (Math.abs(convertedValue) >= 1_000_000) {
+  if (Math.abs(convertedValue) >= 100_000_000) {
     // 1m and above: compact formatting
     formattedValue = format(stat.value, true);
   } else {

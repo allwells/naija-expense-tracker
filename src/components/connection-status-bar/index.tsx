@@ -141,7 +141,7 @@ export function ConnectionStatusBar() {
       role="status"
       aria-live="polite"
       className={cn(
-        "fixed top-0 inset-x-0 z-[9999]",
+        "fixed top-0 inset-x-0 z-9999",
         "flex items-center justify-between gap-3 px-4 py-2",
         "text-xs font-medium",
         "border-b transition-colors duration-300",
