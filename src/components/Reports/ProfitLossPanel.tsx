@@ -67,7 +67,7 @@ export function ProfitLossPanel({ taxData }: ProfitLossPanelProps) {
             </div>
 
             <span className="font-mono font-bold text-emerald-900 dark:text-emerald-300">
-              {formatAmount(t.totalIncome)}
+              {formatAmount(t.totalIncome, t.totalIncome > 100_000_000)}
             </span>
           </div>
         </div>
@@ -95,7 +95,9 @@ export function ProfitLossPanel({ taxData }: ProfitLossPanelProps) {
                     {d.label.replace(/_/g, " ")}
                   </span>
                 </div>
-                <span className="font-mono">{formatAmount(d.amount)}</span>
+                <span className="font-mono">
+                  {formatAmount(d.amount, d.amount > 100_000_000)}
+                </span>
               </div>
             ))}
 
@@ -106,7 +108,10 @@ export function ProfitLossPanel({ taxData }: ProfitLossPanelProps) {
                   <span>Pension Contribution</span>
                 </div>
                 <span className="font-mono">
-                  {formatAmount(t.pensionDeduction)}
+                  {formatAmount(
+                    t.pensionDeduction,
+                    t.pensionDeduction > 100_000_000,
+                  )}
                 </span>
               </div>
             )}
@@ -118,7 +123,7 @@ export function ProfitLossPanel({ taxData }: ProfitLossPanelProps) {
                   <span>NHF Contribution</span>
                 </div>
                 <span className="font-mono">
-                  {formatAmount(t.nhfDeduction)}
+                  {formatAmount(t.nhfDeduction, t.nhfDeduction > 100_000_000)}
                 </span>
               </div>
             )}
@@ -129,14 +134,20 @@ export function ProfitLossPanel({ taxData }: ProfitLossPanelProps) {
                   <IconArrowRight className="w-3 h-3 opacity-50" />
                   <span>Rent Relief</span>
                 </div>
-                <span className="font-mono">{formatAmount(t.rentRelief)}</span>
+                <span className="font-mono">
+                  {formatAmount(t.rentRelief, t.rentRelief > 100_000_000)}
+                </span>
               </div>
             )}
 
             <div className="flex justify-between items-center font-bold pt-3 mt-3 border-t border-dashed">
               <span>Total Deductions</span>
               <span className="font-mono text-destructive">
-                -{formatAmount(t.totalDeductions)}
+                -
+                {formatAmount(
+                  t.totalDeductions,
+                  t.totalDeductions > 100_000_000,
+                )}
               </span>
             </div>
           </div>
@@ -149,7 +160,7 @@ export function ProfitLossPanel({ taxData }: ProfitLossPanelProps) {
           <div className="flex justify-between items-center">
             <span className="font-semibold text-sm">Taxable Profit</span>
             <span className="font-mono font-bold">
-              {formatAmount(t.taxableProfit)}
+              {formatAmount(t.taxableProfit, t.taxableProfit > 100_000_000)}
             </span>
           </div>
 
@@ -159,7 +170,11 @@ export function ProfitLossPanel({ taxData }: ProfitLossPanelProps) {
               <span className="font-semibold">Tax Payable</span>
             </div>
             <span className="font-mono text-destructive font-bold">
-              -{formatAmount(taxData.totalTaxPayable)}
+              -
+              {formatAmount(
+                taxData.totalTaxPayable,
+                taxData.totalTaxPayable > 100_000_000,
+              )}
             </span>
           </div>
         </div>
@@ -170,11 +185,11 @@ export function ProfitLossPanel({ taxData }: ProfitLossPanelProps) {
         <div className="p-4 bg-primary/5 dark:bg-primary/10">
           <div className="flex items-center justify-between font-bold text-primary">
             <div className="flex items-center gap-2">
-              <IconWallet className="size-6" />
-              <span className="text-lg">Net Profit</span>
+              <IconWallet className="xs:size-6 size-5 shrink-0" />
+              <span className="xs:text-lg text-base">Net Profit</span>
             </div>
-            <span className="text-xl font-mono">
-              {formatAmount(netAfterTax)}
+            <span className="xs:text-xl text-lg font-mono">
+              {formatAmount(netAfterTax, netAfterTax > 100_000_000)}
             </span>
           </div>
         </div>

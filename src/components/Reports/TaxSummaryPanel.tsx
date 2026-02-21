@@ -48,7 +48,7 @@ export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
     <Card className="transition-all p-0 gap-0 h-full border rounded-xl">
       <CardHeader className="px-4 pt-4 pb-2 bg-muted/30 border-b border-border/50">
         <CardTitle className="text-base leading-none flex items-center gap-2">
-          <IconReportMoney className="size-5 text-primary" />
+          <IconReportMoney className="size-5 text-primary shrink-0" />
           {taxData.taxYear} Official Tax Summary
         </CardTitle>
       </CardHeader>
@@ -57,7 +57,7 @@ export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
         {/* Corporate Income Tax */}
         <div className="p-4">
           <div className="flex items-center gap-2 mb-4 text-foreground">
-            <IconBuildingBank className="w-4 h-4" />
+            <IconBuildingBank className="size-4 shrink-0" />
             <h4 className="font-semibold text-sm uppercase tracking-wider">
               Company Taxes
             </h4>
@@ -66,8 +66,8 @@ export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
             <div className="flex justify-between text-sm items-center">
               <div className="flex flex-col">
                 <span className="font-medium">Company Income Tax (CIT)</span>
-                <span className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                  <IconInfoCircle className="size-3" />
+                <span className="text-xs text-muted-foreground flex items-start gap-1 mt-1">
+                  <IconInfoCircle className="size-3.5 shrink-0 stroke-[1.3]" />
                   {taxData.isSmallBusinessExempt
                     ? `Turnover ${formatAmount(taxData.cit.annualTurnover, true)} ≤ ${formatAmount(100_000_000, true)} and Fixed Assets ${formatAmount(taxData.cit.fixedAssets, true)} ≤ ${formatAmount(250_000_000, true)} — exempt under 2026 Tax Reform Act`
                     : "Standard 30% rate"}
@@ -79,7 +79,7 @@ export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
             </div>
             <div className="flex items-center justify-between text-sm text-muted-foreground hover:text-foreground transition-colors">
               <div className="flex items-center gap-2">
-                <IconArrowRight className="size-3 opacity-50" />
+                <IconArrowRight className="size-3.5 opacity-50 shrink-0" />
                 <span>Development Levy (4%)</span>
               </div>
               <span className="font-mono">
@@ -101,7 +101,7 @@ export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
             <Separator />
             <div className="p-4 flex-1">
               <div className="flex items-center gap-2 mb-4 text-emerald-600 dark:text-emerald-400">
-                <IconUser className="w-4 h-4" />
+                <IconUser className="size-4 shrink-0" />
                 <h4 className="font-semibold text-sm uppercase tracking-wider">
                   Personal Income Tax (PIT)
                 </h4>
@@ -113,23 +113,26 @@ export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
                     className="flex justify-between items-center group"
                   >
                     <div className="flex items-center gap-2 text-muted-foreground group-hover:text-foreground transition-colors">
-                      <IconArrowRight className="size-3 opacity-50" />
+                      <IconArrowRight className="size-3.5 opacity-50 shrink-0" />
                       <span>
                         {bracket.max === Infinity
-                          ? `Above ${formatAmount(bracket.min)}`
-                          : `${formatAmount(bracket.min)} – ${formatAmount(bracket.max)}`}{" "}
+                          ? `Above ${formatAmount(bracket.min, true)}`
+                          : `${formatAmount(bracket.min, true)} – ${formatAmount(bracket.max, true)}`}{" "}
                         @ {(bracket.rate * 100).toFixed(0)}%
                       </span>
                     </div>
                     <span className="font-mono text-muted-foreground group-hover:text-foreground transition-colors">
-                      {formatAmount(bracket.tax)}
+                      {formatAmount(bracket.tax, true)}
                     </span>
                   </div>
                 ))}
                 <div className="flex justify-between font-bold pt-3 mt-3 border-t border-dashed">
                   <span>Total Personal Tax</span>
                   <span className="font-mono">
-                    {formatAmount(taxData.pit.totalPIT)}
+                    {formatAmount(
+                      taxData.pit.totalPIT,
+                      taxData.pit.totalPIT > 100_000_000,
+                    )}
                   </span>
                 </div>
               </div>
@@ -141,7 +144,7 @@ export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
         <Separator />
         <div className="p-4 flex-1 bg-muted/5">
           <div className="flex items-center gap-2 mb-4 text-amber-600 dark:text-amber-400">
-            <IconCash className="w-4 h-4" />
+            <IconCash className="size-4 shrink-0" />
             <h4 className="font-semibold text-sm uppercase tracking-wider">
               Other Taxes
             </h4>
@@ -149,14 +152,14 @@ export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
           <div className="space-y-3 text-sm">
             <div className="flex items-center justify-between text-muted-foreground hover:text-foreground transition-colors">
               <div className="flex items-center gap-2">
-                <IconArrowRight className="size-3 opacity-50" />
+                <IconArrowRight className="size-3.5 opacity-50 shrink-0" />
                 <span>Capital Gains Tax (CGT)</span>
               </div>
               <span className="font-mono">{formatAmount(taxData.cgt)}</span>
             </div>
             <div className="flex items-center justify-between text-muted-foreground hover:text-foreground transition-colors">
               <div className="flex items-center gap-2">
-                <IconArrowRight className="size-3 opacity-50" />
+                <IconArrowRight className="size-3.5 opacity-50 shrink-0" />
                 <span>Dividend Tax (10%)</span>
               </div>
               <span className="font-mono">
@@ -172,16 +175,21 @@ export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
         <div className="p-4 bg-destructive/5 dark:bg-destructive/8">
           <div className="flex justify-between items-center text-destructive">
             <div className="flex items-center gap-2">
-              <IconReceiptTax className="size-6" />
-              <span className="text-lg font-bold">Total Est. Tax</span>
+              <IconReceiptTax className="sm:size-6 size-5 shrink-0" />
+              <span className="sm:text-lg xs:text-base text-sm font-bold">
+                Total Est. Tax
+              </span>
             </div>
-            <div className="space-y-1">
-              <span className="text-xl font-mono font-bold leading-none">
-                {formatAmount(taxData.totalTaxPayable)}
+            <div className="space-y-1 text-right">
+              <span className="xs:text-xl text-lg font-mono font-bold leading-none">
+                {formatAmount(
+                  taxData.totalTaxPayable,
+                  taxData.totalTaxPayable > 100_000_000,
+                )}
               </span>
 
               {taxData.effectiveTaxRate > 0 && (
-                <p className="text-xs text-destructive/80 text-right font-medium">
+                <p className="xs:text-xs text-[10px] text-destructive/80 text-right font-medium">
                   Blended Effective Rate:{" "}
                   {(taxData.effectiveTaxRate * 100).toFixed(1)}%
                 </p>
