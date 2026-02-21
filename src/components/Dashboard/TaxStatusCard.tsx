@@ -1,4 +1,4 @@
-import { formatNGN } from "@/lib/format";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import type { FullTaxLiabilityResult } from "@/lib/tax-engine";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -15,6 +15,8 @@ interface TaxStatusCardProps {
 }
 
 export function TaxStatusCard({ taxData, className }: TaxStatusCardProps) {
+  const { format: formatAmount } = useCurrency();
+
   if (!taxData) return null;
 
   const isExempt = taxData.isSmallBusinessExempt;
@@ -30,7 +32,7 @@ export function TaxStatusCard({ taxData, className }: TaxStatusCardProps) {
       <CardContent>
         <div className="mb-4">
           <p className="text-3xl font-bold font-mono">
-            {formatNGN(taxData.totalTaxPayable)}
+            {formatAmount(taxData.totalTaxPayable)}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
             Total estimated tax across all streams

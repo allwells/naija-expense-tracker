@@ -21,7 +21,7 @@ import {
 import { INCOME_TYPE_LABELS, type IncomeRecord } from "@/types/income";
 import { INCOME_TYPE_VARIANT } from "./utils";
 import { format, parseISO } from "date-fns";
-import { formatNGN } from "@/lib/format";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 type SortField = "date" | "amount_ngn";
 type SortDirection = "asc" | "desc";
@@ -63,6 +63,8 @@ export function IncomeTable({
   onEdit,
   onDelete,
 }: IncomeTableProps) {
+  const { format: formatAmount } = useCurrency();
+
   return (
     <div className="hidden md:block border border-border overflow-hidden rounded-md">
       <Table>
@@ -137,7 +139,7 @@ export function IncomeTable({
                 </TableCell>
 
                 <TableCell className="font-mono tabular-nums">
-                  {formatNGN(record.amount_ngn)}
+                  {formatAmount(record.amount_ngn)}
                 </TableCell>
                 <TableCell>
                   {record.is_export_income ? (

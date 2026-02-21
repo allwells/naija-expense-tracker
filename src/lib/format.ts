@@ -1,15 +1,31 @@
 /**
- * Format a number as Nigerian Naira (₦).
- * @param amount - The amount in NGN
+ * Format a number into the specified currency.
+ * @param amount - The original amount (assumed to be NGN, but will be converted contextually)
+ * @param currency - The target ISO currency code (e.g., 'USD', 'NGN')
  * @param compact - If true, shows ₦1.2M or ₦500K for large values
  */
-export function formatNGN(amount: number, compact = false): string {
+export function formatAmount(
+  amount: number,
+  currency: string = "NGN",
+  compact = false,
+): string {
   if (compact && Math.abs(amount) >= 1_000_000) {
-    return `₦${(amount / 1_000_000).toFixed(2)}M`;
+    // Get the localized symbol for the chosen currency.
+    const formatter = new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 0,
+    });
+    // Extract just the symbol, e.g. "₦" or "$"
+    const parts = formatter.formatToParts(0);
+    const symbol = parts.find((p) => p.type === "currency")?.value || "";
+
+    return `${symbol}${(amount / 1_000_000).toFixed(2)}M`;
   }
+
   return new Intl.NumberFormat("en-NG", {
     style: "currency",
-    currency: "NGN",
+    currency,
     minimumFractionDigits: 2,
   }).format(amount);
 }

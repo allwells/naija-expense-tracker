@@ -19,7 +19,7 @@ import {
 } from "@tabler/icons-react";
 import { toast } from "sonner";
 import { TAG_VARIANT } from "./utils";
-import { formatNGN } from "@/lib/format";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { format, parseISO } from "date-fns";
 import { useState, useTransition } from "react";
 import { deleteExpenseAction } from "@/app/actions/expense-actions";
@@ -41,6 +41,8 @@ export function ExpenseDetailModal({
   onEdit,
   onDelete,
 }: ExpenseDetailModalProps) {
+  const { format: formatAmount } = useCurrency();
+
   if (!expense) return null;
 
   const handleClose = () => {
@@ -61,7 +63,7 @@ export function ExpenseDetailModal({
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">Amount</span>
             <span className="font-mono font-bold tabular-nums text-lg md:text-xl leading-none">
-              {formatNGN(expense.amount_ngn)}
+              {formatAmount(expense.amount_ngn)}
             </span>
           </div>
 

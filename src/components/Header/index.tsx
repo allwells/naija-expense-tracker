@@ -10,7 +10,9 @@ import {
   IconSun,
   IconMoon,
   IconSettings,
+  IconRefresh,
 } from "@tabler/icons-react";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -30,6 +32,7 @@ interface HeaderProps {
 export function Header({ title, className, children }: HeaderProps) {
   const { theme, setTheme } = useTheme();
   const { data: session } = useSession();
+  const { currency, refreshRates, isLoading } = useCurrency();
 
   const handleSignOut = async () => {
     await signOut({
@@ -55,15 +58,28 @@ export function Header({ title, className, children }: HeaderProps) {
       <div className="flex items-center gap-2 h-fit">
         {children}
 
+        {/* Global Currency Refresh Button (only useful if currency is not NGN or for global refresh context) */}
+        {currency !== "NGN" && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 gap-1.5 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 lg:px-3 text-muted-foreground hidden sm:flex"
+            onClick={() => refreshRates()}
+            disabled={isLoading}
+            title="Refresh live exchange rates"
+          >
+            <IconRefresh
+              className={cn("size-3.5", isLoading && "animate-spin")}
+            />
+            <span className="sr-only lg:not-sr-only">Refresh Rates</span>
+          </Button>
+        )}
+
         {/* Profile Dropdown */}
         <div className="h-fit relative flex items-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon-sm"
-                className="overflow-hidden"
-              >
+              <Button variant="outline" size="icon" className="overflow-hidden">
                 <IconUserFilled className="size-6.5 -mb-2 stroke-[1.2] text-primary/30" />
                 <span className="sr-only">Toggle user menu</span>
               </Button>
@@ -87,6 +103,19 @@ export function Header({ title, className, children }: HeaderProps) {
                   <span>Settings</span>
                 </Link>
               </DropdownMenuItem>
+
+              {currency !== "NGN" && (
+                <DropdownMenuItem
+                  onClick={() => refreshRates()}
+                  disabled={isLoading}
+                  className="sm:hidden cursor-pointer"
+                >
+                  <IconRefresh
+                    className={cn("size-5", isLoading && "animate-spin")}
+                  />
+                  <span>Refresh Rates</span>
+                </DropdownMenuItem>
+              )}
 
               {/* Mobile Only Items */}
               <div className="md:hidden">

@@ -1,6 +1,6 @@
 "use client";
 
-import { formatNGN } from "@/lib/format";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface TooltipEntry {
   name: string;
@@ -19,8 +19,11 @@ export function ChartTooltip({
   active,
   payload,
   label,
-  formatValue = formatNGN,
+  formatValue, // Optional override
 }: ChartTooltipProps) {
+  const { format: formatAmount } = useCurrency();
+  const format = formatValue ?? formatAmount;
+
   if (!active || !payload?.length) return null;
 
   return (
@@ -47,7 +50,7 @@ export function ChartTooltip({
             </span>
           </div>
           <span className="text-xs font-mono font-semibold">
-            {formatValue(entry.value)}
+            {format(entry.value)}
           </span>
         </div>
       ))}

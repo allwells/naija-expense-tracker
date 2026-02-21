@@ -2,7 +2,7 @@
 
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { formatNGN } from "@/lib/format";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import {
   IconScan,
   IconAlertTriangle,
@@ -26,6 +26,8 @@ export function OcrScanner({
   onAcceptAmount,
   onAcceptDate,
 }: OcrScannerProps) {
+  const { format: formatAmount } = useCurrency();
+
   if (status === "idle") return null;
 
   return (
@@ -75,7 +77,7 @@ export function OcrScanner({
               <div className="flex items-center justify-between gap-3 text-sm">
                 <span className="text-muted-foreground">Amount detected:</span>
                 <span className="font-mono font-semibold">
-                  {formatNGN(result.amount)}
+                  {formatAmount(result.amount)}
                 </span>
                 <div className="flex items-center gap-1 ml-auto">
                   <Button

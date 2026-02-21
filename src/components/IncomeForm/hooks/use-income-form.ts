@@ -11,7 +11,7 @@ import {
   createIncomeAction,
   updateIncomeAction,
 } from "@/app/actions/income-actions";
-import { formatNGN } from "@/lib/format";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import type { IncomeRecord } from "@/types/income";
 import { INCOME_TYPE_LABELS } from "@/types/income";
 import { useExchangeRates } from "@/hooks/use-exchange-rates";
@@ -30,6 +30,7 @@ export function useIncomeForm({
 }: UseIncomeFormOptions) {
   const isEditing = Boolean(income);
   const { getRate } = useExchangeRates();
+  const { format: formatAmount } = useCurrency();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const emptyDefaults: CreateIncomeSchema = {
@@ -126,7 +127,7 @@ export function useIncomeForm({
         toast.success(isEditing ? "Income updated" : "Income recorded", {
           description: isEditing
             ? "Your changes have been saved."
-            : `${formatNGN(saved.amount_ngn)} from ${saved.source} logged.`,
+            : `${formatAmount(saved.amount_ngn)} from ${saved.source} logged.`,
         });
 
         form.reset({

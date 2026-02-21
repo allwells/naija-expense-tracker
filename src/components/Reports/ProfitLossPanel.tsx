@@ -1,4 +1,4 @@
-import { formatNGN } from "@/lib/format";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import {
   Card,
   CardContent,
@@ -21,6 +21,8 @@ interface ProfitLossPanelProps {
 }
 
 export function ProfitLossPanel({ taxData }: ProfitLossPanelProps) {
+  const { format: formatAmount } = useCurrency();
+
   if (!taxData) return null;
 
   const t = taxData.taxableProfit;
@@ -46,7 +48,7 @@ export function ProfitLossPanel({ taxData }: ProfitLossPanelProps) {
             </div>
 
             <span className="font-mono font-bold text-emerald-900 dark:text-emerald-300">
-              {formatNGN(t.totalIncome)}
+              {formatAmount(t.totalIncome)}
             </span>
           </div>
         </div>
@@ -74,7 +76,7 @@ export function ProfitLossPanel({ taxData }: ProfitLossPanelProps) {
                     {d.label.replace(/_/g, " ")}
                   </span>
                 </div>
-                <span className="font-mono">{formatNGN(d.amount)}</span>
+                <span className="font-mono">{formatAmount(d.amount)}</span>
               </div>
             ))}
 
@@ -85,7 +87,7 @@ export function ProfitLossPanel({ taxData }: ProfitLossPanelProps) {
                   <span>Pension Contribution</span>
                 </div>
                 <span className="font-mono">
-                  {formatNGN(t.pensionDeduction)}
+                  {formatAmount(t.pensionDeduction)}
                 </span>
               </div>
             )}
@@ -96,7 +98,9 @@ export function ProfitLossPanel({ taxData }: ProfitLossPanelProps) {
                   <IconArrowRight className="w-3 h-3 opacity-50" />
                   <span>NHF Contribution</span>
                 </div>
-                <span className="font-mono">{formatNGN(t.nhfDeduction)}</span>
+                <span className="font-mono">
+                  {formatAmount(t.nhfDeduction)}
+                </span>
               </div>
             )}
 
@@ -106,14 +110,14 @@ export function ProfitLossPanel({ taxData }: ProfitLossPanelProps) {
                   <IconArrowRight className="w-3 h-3 opacity-50" />
                   <span>Rent Relief</span>
                 </div>
-                <span className="font-mono">{formatNGN(t.rentRelief)}</span>
+                <span className="font-mono">{formatAmount(t.rentRelief)}</span>
               </div>
             )}
 
             <div className="flex justify-between items-center font-bold pt-3 mt-3 border-t border-dashed">
               <span>Total Deductions</span>
               <span className="font-mono text-destructive">
-                -{formatNGN(t.totalDeductions)}
+                -{formatAmount(t.totalDeductions)}
               </span>
             </div>
           </div>
@@ -126,7 +130,7 @@ export function ProfitLossPanel({ taxData }: ProfitLossPanelProps) {
           <div className="flex justify-between items-center">
             <span className="font-semibold text-sm">Taxable Profit</span>
             <span className="font-mono font-bold">
-              {formatNGN(t.taxableProfit)}
+              {formatAmount(t.taxableProfit)}
             </span>
           </div>
 
@@ -136,7 +140,7 @@ export function ProfitLossPanel({ taxData }: ProfitLossPanelProps) {
               <span className="font-semibold">Tax Payable</span>
             </div>
             <span className="font-mono text-destructive font-bold">
-              -{formatNGN(taxData.totalTaxPayable)}
+              -{formatAmount(taxData.totalTaxPayable)}
             </span>
           </div>
         </div>
@@ -150,7 +154,9 @@ export function ProfitLossPanel({ taxData }: ProfitLossPanelProps) {
               <IconWallet className="size-6" />
               <span className="text-lg">Net Profit</span>
             </div>
-            <span className="text-xl font-mono">{formatNGN(netAfterTax)}</span>
+            <span className="text-xl font-mono">
+              {formatAmount(netAfterTax)}
+            </span>
           </div>
         </div>
       </CardContent>

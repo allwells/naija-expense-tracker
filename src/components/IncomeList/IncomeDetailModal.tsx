@@ -11,7 +11,7 @@ import {
   Button,
 } from "@/components/ui";
 import { IconPencil, IconTrash } from "@tabler/icons-react";
-import { formatNGN } from "@/lib/format";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { format, parseISO } from "date-fns";
 import { INCOME_TYPE_LABELS, type IncomeRecord } from "@/types/income";
 import { INCOME_TYPE_VARIANT } from "./utils";
@@ -31,6 +31,8 @@ export function IncomeDetailModal({
   onEdit,
   onDelete,
 }: IncomeDetailModalProps) {
+  const { format: formatAmount } = useCurrency();
+
   if (!income) return null;
 
   return (
@@ -47,7 +49,7 @@ export function IncomeDetailModal({
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">Amount (NGN)</span>
             <span className="font-mono font-bold tabular-nums text-lg md:text-xl leading-none">
-              {formatNGN(income.amount_ngn)}
+              {formatAmount(income.amount_ngn)}
             </span>
           </div>
 

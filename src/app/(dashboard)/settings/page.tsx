@@ -1,20 +1,36 @@
-import { IconSettings } from "@tabler/icons-react";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { Header } from "@/components/Header";
+import { SettingsClient } from "@/components/Settings";
+import { createServiceClient } from "@/lib/supabase";
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  const supabase = createServiceClient();
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", session.user.id)
+    .single();
+
+  if (error || !profile) {
+    // If the profile is completely missing, redirect to onboarding
+    // where ensureProfile is fully handled
+    redirect("/onboarding");
+  }
+
   return (
     <div className="w-full">
       <Header title="Settings" />
-
-      <div className="mt-8 flex flex-col items-center justify-center py-16 px-4 text-center">
-        <div className="mb-4 flex h-16 w-16 items-center justify-center border-2 border-dashed border-border_muted rounded-full bg-muted/20">
-          <IconSettings className="h-8 w-8 text-muted-foreground" />
-        </div>
-        <h3 className="text-base font-semibold">Settings</h3>
-        <p className="mt-1 max-w-xs text-sm text-muted-foreground">
-          App configuration and preferences will be available shortly.
-        </p>
-      </div>
+      <main className="mt-8 px-4 md:px-6">
+        <SettingsClient profile={profile} />
+      </main>
     </div>
   );
 }

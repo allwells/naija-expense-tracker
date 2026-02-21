@@ -26,7 +26,7 @@ import {
 } from "@/types/expense";
 import { TAG_VARIANT } from "./utils";
 import { format, parseISO } from "date-fns";
-import { formatNGN } from "@/lib/format";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 type SortField = "date" | "amount_ngn" | "category";
 type SortDirection = "asc" | "desc";
@@ -68,6 +68,8 @@ export function ExpensesTable({
   onDelete,
   onViewReceipt,
 }: ExpensesTableProps) {
+  const { format: formatAmount } = useCurrency();
+
   return (
     <div className="hidden md:block border border-border overflow-hidden rounded-md">
       <Table>
@@ -158,7 +160,7 @@ export function ExpensesTable({
                   </Badge>
                 </TableCell>
                 <TableCell className="font-mono tabular-nums">
-                  {formatNGN(expense.amount_ngn)}
+                  {formatAmount(expense.amount_ngn)}
                 </TableCell>
                 <TableCell onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center justify-center gap-1">

@@ -9,11 +9,12 @@ const FALLBACK_RATES: Record<string, number> = {
   EUR_NGN: 1689,
 };
 
-const CACHE_TTL_HOURS = 1;
+const CACHE_TTL_HOURS = 6;
 
 export async function getExchangeRate(
   from: string,
   to: string = "NGN",
+  force: boolean = false,
 ): Promise<number> {
   if (from === to) return 1;
 
@@ -28,7 +29,7 @@ export async function getExchangeRate(
     .eq("target_currency", to)
     .maybeSingle();
 
-  if (cached) {
+  if (cached && !force) {
     const ageHours =
       (Date.now() - new Date(cached.fetched_at as string).getTime()) / 3600000;
     if (ageHours < CACHE_TTL_HOURS) return cached.rate as number;
@@ -77,13 +78,15 @@ export async function convertToNGN(
   return { amountNGN: Math.round(amount * rate * 100) / 100, rate };
 }
 
-export async function getAllRates(): Promise<Record<string, number>> {
+export async function getAllRates(
+  force: boolean = false,
+): Promise<Record<string, number>> {
   const currencies = ["USD", "EUR", "GBP"];
   const rates: Record<string, number> = {};
 
   await Promise.all(
     currencies.map(async (c) => {
-      rates[`${c}_NGN`] = await getExchangeRate(c, "NGN");
+      rates[`${c}_NGN`] = await getExchangeRate(c, "NGN", force);
     }),
   );
 

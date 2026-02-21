@@ -11,7 +11,7 @@ import {
   createExpenseAction,
   updateExpenseAction,
 } from "@/app/actions/expense-actions";
-import { formatNGN } from "@/lib/format";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import type { ExpenseRecord } from "@/types/expense";
 import { EXPENSE_CATEGORY_LABELS } from "@/types/expense";
 import { useExchangeRates } from "@/hooks/use-exchange-rates";
@@ -30,6 +30,7 @@ export function useExpenseForm({
 }: UseExpenseFormOptions) {
   const isEditing = Boolean(expense);
   const { getRate } = useExchangeRates();
+  const { format: formatAmount } = useCurrency();
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [receiptPreviewUrl, setReceiptPreviewUrl] = useState<string | null>(
     expense?.receipt_url ?? null,
@@ -170,7 +171,7 @@ export function useExpenseForm({
         toast.success(isEditing ? "Expense updated" : "Expense recorded", {
           description: isEditing
             ? "Your changes have been saved."
-            : `${formatNGN(saved.amount_ngn)} · ${categoryLabel} added successfully.`,
+            : `${formatAmount(saved.amount_ngn)} · ${categoryLabel} added successfully.`,
         });
 
         form.reset({

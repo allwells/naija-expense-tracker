@@ -1,4 +1,4 @@
-import { formatNGN } from "@/lib/format";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import type { TrendStat } from "@/lib/analytics-service";
 import {
   IconArrowUpRight,
@@ -28,7 +28,8 @@ interface StatsCardProps {
 }
 
 function StatsCard({ label, stat, icon: Icon, presetText }: StatsCardProps) {
-  const formattedValue = formatNGN(stat.value, true);
+  const { format: formatAmount } = useCurrency();
+  const formattedValue = formatAmount(stat.value, true);
 
   let trendDisplay = "0.0%";
   let TrendIcon = IconMinus;

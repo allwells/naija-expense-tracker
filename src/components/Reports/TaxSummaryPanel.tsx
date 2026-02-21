@@ -5,7 +5,7 @@ import {
   CardTitle,
   Separator,
 } from "@/components/ui";
-import { formatNGN } from "@/lib/format";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import type { FullTaxLiabilityResult } from "@/lib/tax-engine";
 import {
   IconBuildingBank,
@@ -22,6 +22,8 @@ interface TaxSummaryPanelProps {
 }
 
 export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
+  const { format: formatAmount } = useCurrency();
+
   if (!taxData) {
     return (
       <Card className="transition-all p-0 gap-0 h-full border rounded-xl">
@@ -70,7 +72,7 @@ export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
                 </span>
               </div>
               <span className="font-mono font-bold tracking-tight">
-                {formatNGN(taxData.cit.cit)}
+                {formatAmount(taxData.cit.cit)}
               </span>
             </div>
             <div className="flex items-center justify-between text-sm text-muted-foreground hover:text-foreground transition-colors">
@@ -79,12 +81,14 @@ export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
                 <span>Development Levy (4%)</span>
               </div>
               <span className="font-mono">
-                {formatNGN(taxData.cit.developmentLevy)}
+                {formatAmount(taxData.cit.developmentLevy)}
               </span>
             </div>
             <div className="flex justify-between font-bold pt-3 mt-3 border-t border-dashed text-sm">
               <span>Total Corporate Tax</span>
-              <span className="font-mono">{formatNGN(taxData.cit.total)}</span>
+              <span className="font-mono">
+                {formatAmount(taxData.cit.total)}
+              </span>
             </div>
           </div>
         </div>
@@ -113,14 +117,14 @@ export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
                       </span>
                     </div>
                     <span className="font-mono text-muted-foreground group-hover:text-foreground transition-colors">
-                      {formatNGN(bracket.tax)}
+                      {formatAmount(bracket.tax)}
                     </span>
                   </div>
                 ))}
                 <div className="flex justify-between font-bold pt-3 mt-3 border-t border-dashed">
                   <span>Total Personal Tax</span>
                   <span className="font-mono">
-                    {formatNGN(taxData.pit.totalPIT)}
+                    {formatAmount(taxData.pit.totalPIT)}
                   </span>
                 </div>
               </div>
@@ -143,7 +147,7 @@ export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
                 <IconArrowRight className="size-3 opacity-50" />
                 <span>Capital Gains Tax (CGT)</span>
               </div>
-              <span className="font-mono">{formatNGN(taxData.cgt)}</span>
+              <span className="font-mono">{formatAmount(taxData.cgt)}</span>
             </div>
             <div className="flex items-center justify-between text-muted-foreground hover:text-foreground transition-colors">
               <div className="flex items-center gap-2">
@@ -151,7 +155,7 @@ export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
                 <span>Dividend Tax (10%)</span>
               </div>
               <span className="font-mono">
-                {formatNGN(taxData.dividendTax)}
+                {formatAmount(taxData.dividendTax)}
               </span>
             </div>
           </div>
@@ -168,7 +172,7 @@ export function TaxSummaryPanel({ taxData }: TaxSummaryPanelProps) {
             </div>
             <div className="space-y-1">
               <span className="text-xl font-mono font-bold leading-none">
-                {formatNGN(taxData.totalTaxPayable)}
+                {formatAmount(taxData.totalTaxPayable)}
               </span>
 
               {taxData.effectiveTaxRate > 0 && (
