@@ -58,14 +58,14 @@ export function formatCompactNumber(amount: number): string {
   const sign = amount < 0 ? "-" : "";
 
   if (absAmount >= 1_000_000_000) {
-    return `${sign}${(absAmount / 1_000_000_000).toFixed(2).replace(/\.00$/, "")}b`;
+    return `${sign}${Number((absAmount / 1_000_000_000).toFixed(2))}b`;
   }
   if (absAmount >= 1_000_000) {
-    return `${sign}${(absAmount / 1_000_000).toFixed(1).replace(/\.0$/, "")}m`;
+    return `${sign}${Number((absAmount / 1_000_000).toFixed(2))}m`;
   }
   if (absAmount >= 1_000) {
-    return `${sign}${(absAmount / 1_000).toFixed(1).replace(/\.0$/, "")}k`;
+    return `${sign}${Number((absAmount / 1_000).toFixed(2))}k`;
   }
 
-  return `${sign}${absAmount.toString()}`;
+  return `${sign}${Number(absAmount.toFixed(2))}`;
 }
