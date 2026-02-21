@@ -1,6 +1,7 @@
 import { Navigation } from "@/components/Navigation";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { createServiceClient } from "@/lib/supabase";
+import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({
   children,
@@ -16,9 +17,14 @@ export default async function DashboardLayout({
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("currency_preference")
+      .select("currency_preference, onboarding_complete")
       .eq("id", user.id)
       .single();
+
+    if (!profile?.onboarding_complete) {
+      redirect("/onboarding");
+    }
+
     if (profile?.currency_preference) {
       userCurrency = profile.currency_preference;
     }

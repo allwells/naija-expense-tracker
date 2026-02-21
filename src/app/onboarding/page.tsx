@@ -1,7 +1,9 @@
+import { Logo } from "@/components/Logo";
+import { redirect } from "next/navigation";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { LogoutButton } from "@/components/Navigation/LogoutButton";
 import { OnboardingClient } from "@/components/Onboarding";
 import { ensureProfileExistsAction } from "@/app/actions/profile-actions";
-import { redirect } from "next/navigation";
-import { IconReceiptTax } from "@tabler/icons-react";
 
 export default async function OnboardingPage() {
   const result = await ensureProfileExistsAction();
@@ -16,13 +18,18 @@ export default async function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <header className="h-16 border-b flex items-center px-6 sticky top-0 bg-background/95 backdrop-blur z-10">
-        <div className="flex items-center gap-2 font-semibold">
-          <IconReceiptTax className="size-6 text-primary" />
-          <span className="tracking-tight">NaijaExpense</span>
+    <div className="min-h-screen bg-background flex flex-col items-center">
+      <header className="w-full h-14 border-b flex justify-center items-center sticky top-0 bg-background/95 backdrop-blur z-10">
+        <div className="container flex justify-between items-center">
+          <Logo />
+
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <LogoutButton />
+          </div>
         </div>
       </header>
+
       <main className="flex-1 flex items-center justify-center container">
         <OnboardingClient initialProfile={result.data} />
       </main>

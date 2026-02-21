@@ -1,3 +1,26 @@
+export function getCurrencyLocale(currency: string): string {
+  switch (currency) {
+    case "USD":
+      return "en-US";
+    case "EUR":
+      return "en-IE"; // English Ireland uses Euro
+    case "GBP":
+      return "en-GB";
+    case "NGN":
+    default:
+      return "en-NG";
+  }
+}
+
+export function getCurrencySymbol(currency: string): string {
+  const locale = getCurrencyLocale(currency);
+  const parts = new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+  }).formatToParts(0);
+  return parts.find((p) => p.type === "currency")?.value || currency;
+}
+
 /**
  * Format a number into the specified currency.
  * @param amount - The original amount (assumed to be NGN, but will be converted contextually)
@@ -9,21 +32,14 @@ export function formatAmount(
   currency: string = "NGN",
   compact = false,
 ): string {
-  if (compact && Math.abs(amount) >= 1_000_000) {
-    // Get the localized symbol for the chosen currency.
-    const formatter = new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency,
-      maximumFractionDigits: 0,
-    });
-    // Extract just the symbol, e.g. "₦" or "$"
-    const parts = formatter.formatToParts(0);
-    const symbol = parts.find((p) => p.type === "currency")?.value || "";
+  const locale = getCurrencyLocale(currency);
 
+  if (compact && Math.abs(amount) >= 1_000_000) {
+    const symbol = getCurrencySymbol(currency);
     return `${symbol}${(amount / 1_000_000).toFixed(2)}M`;
   }
 
-  return new Intl.NumberFormat("en-NG", {
+  return new Intl.NumberFormat(locale, {
     style: "currency",
     currency,
     minimumFractionDigits: 2,

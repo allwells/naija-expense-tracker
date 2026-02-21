@@ -16,6 +16,7 @@ import { formatCompactNumber } from "@/lib/format";
 import { ChartTooltip, ChartEmpty } from "@/components/shared";
 import type { MonthlyTrendData } from "@/lib/analytics-service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface MonthlyTrendChartProps {
   data: MonthlyTrendData[];
@@ -23,6 +24,7 @@ interface MonthlyTrendChartProps {
 }
 
 export function MonthlyTrendChart({ data, className }: MonthlyTrendChartProps) {
+  const { symbol, convert } = useCurrency();
   // If no income and no expenses for the whole year, show empty state
   const hasData = data.some((m) => m.income > 0 || m.expenses > 0);
 
@@ -72,7 +74,9 @@ export function MonthlyTrendChart({ data, className }: MonthlyTrendChartProps) {
               tickLine
             />
             <YAxis
-              tickFormatter={(v) => `₦${formatCompactNumber(v)}`}
+              tickFormatter={(v) =>
+                `${symbol}${formatCompactNumber(convert(v))}`
+              }
               tick={{
                 fontSize: 10,
                 fontFamily: "var(--font-mono)",

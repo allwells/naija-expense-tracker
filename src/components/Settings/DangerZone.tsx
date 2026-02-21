@@ -21,6 +21,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { createBrowserClient } from "@/lib/supabase";
+import { IconLoader2 } from "@tabler/icons-react";
 
 export function DangerZone({ userId }: { userId: string }) {
   const [isDeletingData, setIsDeletingData] = useState(false);
@@ -92,9 +93,9 @@ export function DangerZone({ userId }: { userId: string }) {
   };
 
   return (
-    <Card className="border-red-900/20 dark:border-red-900/50">
+    <Card className="border-destructive/20 dark:border-destructive/50">
       <CardHeader className="px-4">
-        <CardTitle className="text-red-600 dark:text-red-500">
+        <CardTitle className="text-destructive dark:text-destructive">
           Danger Zone
         </CardTitle>
         <CardDescription>
@@ -115,7 +116,7 @@ export function DangerZone({ userId }: { userId: string }) {
             <AlertDialogTrigger asChild>
               <Button
                 variant="outline"
-                className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 dark:border-red-900 dark:hover:bg-red-950 dark:hover:text-red-400"
+                className="text-destructive border-destructive hover:bg-destructive/10 hover:text-destructive dark:border-destructive dark:hover:bg-destructive/10 dark:hover:text-destructive"
               >
                 Clear Data
               </Button>
@@ -134,9 +135,13 @@ export function DangerZone({ userId }: { userId: string }) {
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleClearData}
-                  className="bg-red-600 hover:bg-red-700 text-white"
+                  className="text-destructive bg-destructive border-destructive hover:bg-destructive/10 hover:text-destructive dark:border-destructive dark:bg-destructive dark:hover:bg-destructive/10 dark:hover:text-destructive"
+                  disabled={isDeletingData}
                 >
-                  <span>{isDeletingData ? "Deleting..." : "Clear Data"}</span>
+                  <>
+                    {isDeletingData && <IconLoader2 className="animate-spin" />}
+                    {isDeletingData ? "Deleting..." : "Clear Data"}
+                  </>
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -171,11 +176,15 @@ export function DangerZone({ userId }: { userId: string }) {
 
                 <AlertDialogAction
                   onClick={handleDeleteAccount}
-                  className="bg-red-600 hover:bg-red-700 text-white"
+                  className="text-destructive bg-destructive border-destructive hover:bg-destructive/10 hover:text-destructive dark:border-destructive dark:bg-destructive dark:hover:bg-destructive/10 dark:hover:text-destructive"
+                  disabled={isDeletingAccount}
                 >
-                  <span>
+                  <>
+                    {isDeletingAccount && (
+                      <IconLoader2 className="animate-spin" />
+                    )}
                     {isDeletingAccount ? "Deleting..." : "Delete Account"}
-                  </span>
+                  </>
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

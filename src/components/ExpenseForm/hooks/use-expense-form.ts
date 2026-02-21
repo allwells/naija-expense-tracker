@@ -15,7 +15,7 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import type { ExpenseRecord } from "@/types/expense";
 import { EXPENSE_CATEGORY_LABELS } from "@/types/expense";
 import { useExchangeRates } from "@/hooks/use-exchange-rates";
-import type { Resolver, FieldValues } from "react-hook-form";
+import type { Resolver } from "react-hook-form";
 
 interface UseExpenseFormOptions {
   open: boolean;
@@ -30,7 +30,7 @@ export function useExpenseForm({
 }: UseExpenseFormOptions) {
   const isEditing = Boolean(expense);
   const { getRate } = useExchangeRates();
-  const { format: formatAmount } = useCurrency();
+  const { currency, format: formatAmount } = useCurrency();
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [receiptPreviewUrl, setReceiptPreviewUrl] = useState<string | null>(
     expense?.receipt_url ?? null,
@@ -43,7 +43,7 @@ export function useExpenseForm({
     date: today,
     amount_ngn: undefined as unknown as number,
     original_amount: undefined as unknown as number,
-    original_currency: "NGN",
+    original_currency: currency,
     exchange_rate: 1,
     category: undefined as unknown as any,
     tag: undefined as unknown as any,
@@ -87,7 +87,7 @@ export function useExpenseForm({
         date: format(new Date(), "yyyy-MM-dd"),
         amount_ngn: undefined as unknown as number,
         original_amount: undefined as unknown as number,
-        original_currency: "NGN",
+        original_currency: currency,
         exchange_rate: 1,
         category: undefined as unknown as any,
         tag: undefined as unknown as any,
@@ -178,7 +178,7 @@ export function useExpenseForm({
           date: format(new Date(), "yyyy-MM-dd"),
           amount_ngn: undefined as unknown as number,
           original_amount: undefined as unknown as number,
-          original_currency: "NGN",
+          original_currency: currency,
           exchange_rate: 1,
           category: undefined as unknown as any,
           tag: undefined as unknown as any,

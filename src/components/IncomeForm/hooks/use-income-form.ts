@@ -30,14 +30,14 @@ export function useIncomeForm({
 }: UseIncomeFormOptions) {
   const isEditing = Boolean(income);
   const { getRate } = useExchangeRates();
-  const { format: formatAmount } = useCurrency();
+  const { currency, format: formatAmount } = useCurrency();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const emptyDefaults: CreateIncomeSchema = {
     date: format(new Date(), "yyyy-MM-dd"),
     amount_ngn: undefined as unknown as number,
     original_amount: undefined as unknown as number,
-    original_currency: "NGN",
+    original_currency: currency,
     exchange_rate: 1,
     income_type: undefined as unknown as any,
     is_export_income: false,
@@ -73,7 +73,7 @@ export function useIncomeForm({
         date: format(new Date(), "yyyy-MM-dd"),
         amount_ngn: undefined as unknown as number,
         original_amount: undefined as unknown as number,
-        original_currency: "NGN",
+        original_currency: currency,
         exchange_rate: 1,
         income_type: undefined as unknown as any,
         is_export_income: false,
@@ -134,7 +134,7 @@ export function useIncomeForm({
           date: format(new Date(), "yyyy-MM-dd"),
           amount_ngn: undefined as unknown as number,
           original_amount: undefined as unknown as number,
-          original_currency: "NGN",
+          original_currency: currency,
           exchange_rate: 1,
           income_type: undefined as unknown as any,
           is_export_income: false,

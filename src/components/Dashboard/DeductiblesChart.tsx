@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
 import type { DeductibleData } from "@/lib/analytics-service";
 import { cn } from "@/lib/utils";
 import { formatCompactNumber } from "@/lib/format";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface DeductiblesChartProps {
   data: DeductibleData[];
@@ -23,6 +24,8 @@ interface DeductiblesChartProps {
 }
 
 export function DeductiblesChart({ data, className }: DeductiblesChartProps) {
+  const { symbol, convert } = useCurrency();
+
   if (!data.length) {
     return (
       <Card className={cn("gap-2", className)}>
@@ -65,7 +68,9 @@ export function DeductiblesChart({ data, className }: DeductiblesChartProps) {
             />
             <XAxis
               type="number"
-              tickFormatter={(v) => `₦${formatCompactNumber(v)}`}
+              tickFormatter={(v) =>
+                `${symbol}${formatCompactNumber(convert(v))}`
+              }
               tick={{
                 fontSize: 10,
                 fontFamily: "var(--font-mono)",

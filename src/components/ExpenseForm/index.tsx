@@ -6,6 +6,7 @@ import { useOcr } from "./hooks/use-ocr";
 import { ExpenseFormFields } from "./ExpenseFormFields";
 import { useExpenseForm } from "./hooks/use-expense-form";
 import type { ExpenseRecord } from "@/types/expense";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface ExpenseFormProps {
   open: boolean;
@@ -14,6 +15,7 @@ interface ExpenseFormProps {
 }
 
 export function ExpenseForm({ open, onClose, expense }: ExpenseFormProps) {
+  const { format: formatAmount } = useCurrency();
   const {
     form,
     isEditing,
@@ -65,7 +67,7 @@ export function ExpenseForm({ open, onClose, expense }: ExpenseFormProps) {
       if (hasAmount && hasDate) {
         toast.success("Receipt scanned", {
           id: "ocr-scan",
-          description: `Detected ₦${ocrResult.amount?.toLocaleString()} · ${ocrResult.date}. Review and confirm below.`,
+          description: `Detected ${formatAmount(ocrResult.amount || 0)} · ${ocrResult.date}. Review and confirm below.`,
         });
       } else if (hasAmount || hasDate) {
         toast.info("Partial scan result", {

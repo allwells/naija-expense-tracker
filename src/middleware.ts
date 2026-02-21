@@ -16,7 +16,8 @@ export async function middleware(req: NextRequest) {
     req.nextUrl.pathname.startsWith("/expenses") ||
     req.nextUrl.pathname.startsWith("/income") ||
     req.nextUrl.pathname.startsWith("/reports") ||
-    req.nextUrl.pathname.startsWith("/settings");
+    req.nextUrl.pathname.startsWith("/settings") ||
+    req.nextUrl.pathname.startsWith("/onboarding");
 
   if (!hasSession && isProtectedRoute) {
     return NextResponse.redirect(new URL("/login", req.url));

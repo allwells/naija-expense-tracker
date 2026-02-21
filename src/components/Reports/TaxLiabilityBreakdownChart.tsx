@@ -18,6 +18,8 @@ import { cn } from "@/lib/utils";
 import type { TaxBreakdownData } from "@/lib/analytics-service";
 import { formatCompactNumber } from "@/lib/format";
 
+import { useCurrency } from "@/contexts/CurrencyContext";
+
 interface TaxLiabilityBreakdownChartProps {
   data: TaxBreakdownData[];
   className?: string;
@@ -27,6 +29,7 @@ export function TaxLiabilityBreakdownChart({
   data,
   className,
 }: TaxLiabilityBreakdownChartProps) {
+  const { symbol, convert } = useCurrency();
   const hasData = data.some((d) => d.total > 0);
 
   if (!hasData) {
@@ -76,7 +79,9 @@ export function TaxLiabilityBreakdownChart({
               tickLine
             />
             <YAxis
-              tickFormatter={(v) => `₦${formatCompactNumber(v)}`}
+              tickFormatter={(v) =>
+                `${symbol}${formatCompactNumber(convert(v))}`
+              }
               tick={{
                 fontSize: 10,
                 fontFamily: "var(--font-mono)",

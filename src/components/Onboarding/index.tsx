@@ -1,12 +1,13 @@
 "use client";
 
+import { toast } from "sonner";
 import { useState } from "react";
+import { StepImportData } from "./StepImportData";
+import type { ProfileRow } from "@/types/database";
+import { updateProfileAction } from "@/app/actions/profile-actions";
 import { StepBusinessProfile, type Step1Values } from "./StepBusinessProfile";
 import { StepTaxPreferences, type Step2Values } from "./StepTaxPreferences";
-import { StepImportData } from "./StepImportData";
-import { updateProfileAction } from "@/app/actions/profile-actions";
-import { toast } from "sonner";
-import type { ProfileRow } from "@/types/database";
+import { Card } from "../ui";
 
 interface OnboardingClientProps {
   initialProfile: ProfileRow;
@@ -73,7 +74,7 @@ export function OnboardingClient({ initialProfile }: OnboardingClientProps) {
         </div>
       </div>
 
-      <div className="bg-card border-2 p-6 sm:p-8 rounded-none shadow-sm min-h-[400px]">
+      <Card className="p-4 min-h-[400px]">
         {step === 1 && (
           <StepBusinessProfile
             initialData={formData}
@@ -96,7 +97,7 @@ export function OnboardingClient({ initialProfile }: OnboardingClientProps) {
             isSubmitting={isSubmitting}
           />
         )}
-      </div>
+      </Card>
     </div>
   );
 }

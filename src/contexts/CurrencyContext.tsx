@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useMemo } from "react";
 import { useExchangeRates } from "@/hooks/use-exchange-rates";
-import { formatAmount } from "@/lib/format";
+import { formatAmount, getCurrencySymbol } from "@/lib/format";
 
 interface CurrencyContextValue {
   currency: string;
@@ -17,6 +17,10 @@ interface CurrencyContextValue {
    * Returns just the raw converted numerical value.
    */
   convert: (amountNgn: number) => number;
+  /**
+   * Return the currency symbol
+   */
+  symbol: string;
 }
 
 const CurrencyContext = createContext<CurrencyContextValue | null>(null);
@@ -52,6 +56,7 @@ export function CurrencyProvider({
       refreshRates: refresh,
       format,
       convert,
+      symbol: getCurrencySymbol(userCurrency),
     };
   }, [userCurrency, getRate, isLoading, refresh]);
 
