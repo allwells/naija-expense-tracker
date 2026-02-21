@@ -68,7 +68,7 @@ export function OnboardingClient({ initialProfile }: OnboardingClientProps) {
         </div>
         <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
           <div
-            className="h-full bg-primary transition-all duration-500 ease-in-out"
+            className="h-full bg-primary transition-all duration-500 ease-in-out rounded-full"
             style={{ width: `${(step / 3) * 100}%` }}
           />
         </div>

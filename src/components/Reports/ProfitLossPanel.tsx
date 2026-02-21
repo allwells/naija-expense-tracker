@@ -1,3 +1,5 @@
+"use client";
+
 import { useCurrency } from "@/contexts/CurrencyContext";
 import {
   Card,

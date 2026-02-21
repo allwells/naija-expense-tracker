@@ -2,13 +2,13 @@ import { cn } from "@/lib/utils";
 import { IconCoins } from "@tabler/icons-react";
 
 interface LogoProps {
-  type?: "compact" | "normal";
+  compact?: boolean;
   collapsed?: boolean;
   onClick?: () => void;
 }
 
 export function Logo({
-  type = "normal",
+  compact = false,
   collapsed = false,
   onClick,
 }: LogoProps) {
@@ -29,8 +29,8 @@ export function Logo({
       {!collapsed && (
         <span
           className={cn("uppercase tracking-wider", {
-            "flex flex-col text-xs leading-none": type === "compact",
-            "text-sm leading-none": type === "normal",
+            "flex flex-col text-xs leading-none": compact,
+            "text-sm leading-none": !compact,
           })}
         >
           Naija <span className="font-bold">Expense</span>

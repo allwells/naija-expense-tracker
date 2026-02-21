@@ -2,6 +2,8 @@ import { Navigation } from "@/components/Navigation";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { createServiceClient } from "@/lib/supabase";
 import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export default async function DashboardLayout({
   children,
@@ -9,9 +11,8 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const supabase = createServiceClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await auth.api.getSession({ headers: await headers() });
+  const user = session?.user;
 
   let userCurrency = "NGN";
   if (user) {

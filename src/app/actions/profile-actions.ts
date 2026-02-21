@@ -85,8 +85,7 @@ export async function updateProfileAction(
 
     if (error) return fail(normaliseSupabaseError(error));
 
-    revalidatePath("/dashboard");
-    revalidatePath("/settings");
+    revalidatePath("/", "layout");
     return ok(data as ProfileRow);
   } catch {
     return fail(PROFILE_ERRORS.SAVE_FAILED);

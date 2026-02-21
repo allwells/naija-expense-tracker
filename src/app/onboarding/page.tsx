@@ -1,8 +1,8 @@
 import { Logo } from "@/components/Logo";
 import { redirect } from "next/navigation";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { LogoutButton } from "@/components/Navigation/LogoutButton";
 import { OnboardingClient } from "@/components/Onboarding";
+import { LogoutButton } from "@/components/Navigation/LogoutButton";
 import { ensureProfileExistsAction } from "@/app/actions/profile-actions";
 
 export default async function OnboardingPage() {
@@ -21,7 +21,7 @@ export default async function OnboardingPage() {
     <div className="min-h-screen bg-background flex flex-col items-center">
       <header className="w-full h-14 border-b flex justify-center items-center sticky top-0 bg-background/95 backdrop-blur z-10">
         <div className="container flex justify-between items-center">
-          <Logo />
+          <Logo compact />
 
           <div className="flex items-center gap-2">
             <ThemeToggle />

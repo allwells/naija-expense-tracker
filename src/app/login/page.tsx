@@ -62,7 +62,7 @@ export default function LoginPage() {
 
       <div className="w-full max-w-xs space-y-6">
         <div className="flex items-center justify-center gap-3">
-          <Logo type="compact" />
+          <Logo compact />
           <div className="w-0 h-6 shrink-0 border-r" />
           <h3 className="text-sm uppercase font-bold">Admin Login</h3>
         </div>
